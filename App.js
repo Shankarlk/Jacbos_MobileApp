@@ -10,7 +10,9 @@ import FileViewerScreen from "./app/Screens/FileViewerScreen";
 import StListOfStudentsScreen from "./app/Screens/StListOfStudentsScreen";
 import MessageScreen from "./app/Screens/MessageScreen";
 import ListOfStudentsScreen from "./app/Screens/ListOfStudentsScreen";
-// import MainStudentApp from "./app/Screens/MainStudentApp";
+import MainStudentApp from "./app/Screens/MainStudentApp";
+import ResultScreen from "./app/Screens/ResultScreen";
+import ListOfFilesScreen from "./app/Screens/ListOfFilesScreen";
 
 const Stack = createStackNavigator();
 
@@ -27,7 +29,9 @@ export default function App() {
         <Stack.Screen name="StListOfStudentsScreen" component={StListOfStudentsScreen} />
         <Stack.Screen name="MessageScreen" component={MessageScreen} />
         <Stack.Screen name="ListOfStudentsScreen" component={ListOfStudentsScreen} />
-        {/* <Stack.Screen name="MainStudentApp" component={MainStudentApp} /> */}
+        <Stack.Screen name="MainStudentApp" component={MainStudentApp} /> 
+        <Stack.Screen name="ResultScreen" component={ResultScreen} /> 
+        <Stack.Screen name="ListOfFilesScreen" component={ListOfFilesScreen} /> 
       </Stack.Navigator>
     </NavigationContainer>
   );

@@ -13,7 +13,7 @@ function ListOfFilesScreen({ route, navigation }) {
  
       const fetchEventDetails = async () => {
          try {       
-           const eventResponse = await fetch(`http://192.168.38.122:5000/api/GalleryApi/getgalleryevents?StandardId=${StandardId}`);
+           const eventResponse = await fetch(`http://192.168.109.122:5000/api/GalleryApi/getgalleryevents?StandardId=${StandardId}`);
            const eventData = await eventResponse.json();
            console.log(eventData);
            const specificEvent = eventData.filter(event => event.eventId === Number(eventId));

@@ -1,28 +1,24 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, ScrollView, TouchableOpacity, ActivityIndicator } from 'react-native';
+import { View, Text, ScrollView, TouchableOpacity, ActivityIndicator, Image } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 
 const StudentDetailsScreen = ({ route }) => {
     const navigation = useNavigation();
-    const { username, userId, loggeduser } = route.params;
+    const { username, userId } = route.params;
     const [student, setStudent] = useState(null);
     const [loading, setLoading] = useState(true);
 
     const formatDate = (dateString) => {
         const date = new Date(dateString);
-        const day = String(date.getDate()).padStart(2, '0');
-        const month = String(date.getMonth() + 1).padStart(2, '0');
-        const year = date.getFullYear();
-        return `${day}-${month}-${year}`;
+        return `${date.getDate().toString().padStart(2, '0')}-${(date.getMonth() + 1).toString().padStart(2, '0')}-${date.getFullYear()}`;
     };
 
     useEffect(() => {
         const fetchStudentDetails = async () => {
             try {
-                const response = await fetch(`http://192.168.38.122:5000/api/StudentApi/getstudentdetails?userId=${userId}`);
+                const response = await fetch(`http://192.168.109.122:5000/api/StudentApi/getstudentdetails?userId=${username}`);
                 const data = await response.json();
                 setStudent(data);
-                console.log(data);
             } catch (error) {
                 console.error('Error fetching student details:', error);
             } finally {
@@ -41,20 +37,42 @@ const StudentDetailsScreen = ({ route }) => {
     }
 
     return (
-        <ScrollView contentContainerStyle={{ flexGrow: 1, justifyContent: 'center', alignItems: 'center', padding: 16, backgroundColor: '#f3f4f6' }}>
-        <View style={{ width: '90%', marginBottom: 16, padding: 20, backgroundColor: 'white', borderRadius: 8, shadowOpacity: 0.1, shadowRadius: 4, shadowColor: 'black', shadowOffset: { height: 2, width: 0 } }}>
-            <Text style={{ fontSize: 24, fontWeight: 'bold', textAlign: 'center' }}>{student.name} {student.surname}</Text>
-            <Text style={{ fontSize: 18, color: 'gray' }}>Email Id: {student.email}</Text>
-            <Text style={{ fontSize: 18, color: 'gray' }}>Phone No: {student.phone}</Text>
-            <Text style={{ fontSize: 18, color: 'gray' }}>Standard: {student.standardName}</Text>
-            <Text style={{ fontSize: 18, color: 'gray' }}>Division: {student.divisionName}</Text>
-            <Text style={{ fontSize: 18, color: 'gray' }}>Date Of Join: {formatDate(student.doj)}</Text>
+    <ScrollView contentContainerStyle={{ flexGrow: 1, alignItems: 'center', padding: 16, backgroundColor: '#f3f4f6' }}>
+    
+        {/* Student Details Card */}
+        <View style={{ width: '95%', backgroundColor: 'white', borderRadius: 8, elevation: 4, padding: 10, marginTop: 100 }}>
+            
+            <Image source={require('../assets/profile.png')} style={{ width: 100, height: 100, alignSelf: 'center', marginBottom: 15 }} />
+    
+            <View style={{ paddingHorizontal: 10 }}>
+                {[
+                    { label: 'Student Name', value: `${student.name} ${student.surname}` },
+                    { label: 'Email-ID', value: student.email },
+                    { label: 'Phone No', value: student.phone },
+                    { label: 'Standard Name', value: student.standardName },
+                    { label: 'Division', value: student.divisionName },
+                    { label: 'Date of Join', value: formatDate(student.doj) }
+                ].map((item, index) => (
+                    <View key={index} style={{ flexDirection: 'row', marginBottom: 5, alignItems: 'flex-start' }}>
+                        
+                        <Text style={{ fontSize: 16, fontWeight: 'bold', color: 'blue', minWidth: 130,marginBottom:10 }}>
+                            {item.label} :
+                        </Text>
+    
+                        <Text style={{ fontSize: 16, color: 'black', flex: 1, flexWrap: 'wrap',marginBottom:10 }}>
+                            {item.value}
+                        </Text>
+                    </View>
+                ))}
+            </View>
         </View>
-
-        <TouchableOpacity onPress={() => navigation.goBack()} style={{ padding: 14, backgroundColor: '#3b82f6', borderRadius: 8, alignItems: 'center', width: '50%' }}>
-            <Text style={{ fontSize: 20, color: 'white', fontWeight: 'bold' }}>Back</Text>
-        </TouchableOpacity>
+            <View style={{ flexDirection: 'row', marginTop: 20 }}>
+                <TouchableOpacity onPress={() => navigation.goBack()} style={{ padding: 14, backgroundColor: 'black', borderRadius: 8, marginRight: 10, width: 120, alignItems: 'center' }}>
+                    <Text style={{ fontSize: 18, color: 'white', fontWeight: 'bold' }}>Back</Text>
+                </TouchableOpacity>
+            </View>
     </ScrollView>
+    
     );
 };
 

@@ -20,7 +20,7 @@ const HolidayEventListScreen = () => {
 
   const fetchData = async () => {
     try {
-        const response = await fetch('http://192.168.38.122:5000/api/PublicHolidayApi/getpublicholidays'); 
+        const response = await fetch('http://192.168.109.122:5000/api/PublicHolidayApi/getpublicholidays'); 
       const data = await response.json();
         console.log(data);
       const holidayList = data.filter(item => !item.isEvent)
@@ -54,7 +54,7 @@ const HolidayEventListScreen = () => {
 
   return (
     <ScrollView style={styles.container}>
-      <Text style={styles.heading}>Holidays</Text>
+      <Text style={styles.heading}>Holiday</Text>
       <FlatList
         data={holidays}
         renderItem={renderItem}
@@ -106,11 +106,12 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 16,
+    color:"blue",
     fontWeight: 'bold',
   },
   date: {
     fontSize: 14,
-    color: 'gray',
+    color: 'black',
   },
   loader: {
     flex: 1,

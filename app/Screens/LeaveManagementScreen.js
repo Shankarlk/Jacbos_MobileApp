@@ -4,8 +4,8 @@ import DateTimePicker from '@react-native-community/datetimepicker';
 import DropDownPicker from "react-native-dropdown-picker";
 
 const LeaveManagementScreen = ({route}) => {
-  const { username, loggeduser } = route.params || { username: "Guest", loggeduser: "Unknown" };
-  const isTeacher = true;
+  const { username, loggeduser,isClassteacher } = route.params || { username: "Guest", loggeduser: "Unknown" };
+  const isTeacher = isClassteacher;
     const [phoneNumber, setPhoneNumber] = useState('');
     const [message, setMessage] = useState('');
     const [open, setOpen] = useState(false);
@@ -62,9 +62,12 @@ const LeaveManagementScreen = ({route}) => {
           const toDtval = new Date(toDate);
           const today = new Date();
 
-          // Validate Empty Fields
           if (!username || !leaveType || !leavemessage || !fromDtval || !toDtval) {
               alert("Please fill in all fields.");
+              return;
+          }
+          if (!leaveType) {
+              Alert.alert('Error', 'Please select leave type.');
               return;
           }
 
@@ -166,18 +169,23 @@ const LeaveManagementScreen = ({route}) => {
             {showToDatePicker && (
                 <DateTimePicker value={toDate || new Date()} mode="date" display="default" onChange={handleToDateChange} />
             )}
-            <Text style={styles.row}>Leave Type</Text>
-            <DropDownPicker
-              open={open}
-              value={leaveType}
-              items={items}
-              setOpen={setOpen}
-              setValue={setLeaveType}
-              setItems={setItems}
-              placeholder="Select Leave Type"
-              style={styles.dropdown}
-              dropDownContainerStyle={styles.dropdownContainer}
-            />
+           {isTeacher && (
+              <>
+                <Text style={styles.row}>Leave Type</Text>
+                <DropDownPicker
+                  open={open}
+                  value={leaveType}
+                  items={items}
+                  setOpen={setOpen}
+                  setValue={setLeaveType}
+                  setItems={setItems}
+                  placeholder="Select Leave Type"
+                  style={styles.dropdown}
+                  dropDownContainerStyle={styles.dropdownContainer}
+                />
+              </>
+            )}
+
             <Text style={styles.row}>Enter The Leave Message</Text>
             <TextInput
                 style={[styles.input, styles.textArea]}
@@ -189,7 +197,7 @@ const LeaveManagementScreen = ({route}) => {
             />
         
                     <TouchableOpacity onPress={sendWhatsAppMessage} style={styles.generateButton}>
-                        <Text style={styles.buttonText}>Send Leave Message</Text>
+                        <Text style={styles.buttonText}>Send Leave Request</Text>
                     </TouchableOpacity>
                 </View>
               </View>

@@ -13,7 +13,7 @@ function GalleryScreen({ navigation,route }) {
 
      const fetchEventDetails = async () => {
         try {
-          const studentResponse = await fetch(`http://192.168.38.122:5000/api/StudentApi/getstudentdetails?userId=${userId}`);
+          const studentResponse = await fetch(`http://192.168.109.122:5000/api/StudentApi/getstudentdetails?userId=${username}`);
           const studentData = await studentResponse.json();
           console.log(studentData);
           if (!studentData || !studentData.id) {
@@ -24,7 +24,7 @@ function GalleryScreen({ navigation,route }) {
           console.log(StandardId);
           SetStandard(StandardId);
       
-          const eventResponse = await fetch(`http://192.168.38.122:5000/api/GalleryApi/getgalleryevents?StandardId=${StandardId}`);
+          const eventResponse = await fetch(`http://192.168.109.122:5000/api/GalleryApi/getgalleryevents?StandardId=${StandardId}`);
           const eventData = await eventResponse.json();
           console.log(eventData);
           const uniqueEvents = eventData
@@ -63,7 +63,7 @@ function GalleryScreen({ navigation,route }) {
 
   return (
     <ScrollView style={styles.container}>
-      <Text style={styles.heading}>Events</Text>
+      {/* <Text style={styles.heading}>Events Photos</Text> */}
       <FlatList
         data={events}
         renderItem={renderItem}

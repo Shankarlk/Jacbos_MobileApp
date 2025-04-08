@@ -6,7 +6,7 @@ const TestResultScreen = ({ route,navigation }) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  const { username, userId, loggeduser } = route.params;
+  const { username, loggeduser } = route.params || { username: "Guest", loggeduser: "Unknown" };
 
   useEffect(() => {
     fetchTestResults();
@@ -21,7 +21,7 @@ const TestResultScreen = ({ route,navigation }) => {
 
   const fetchTestResults = async () => {
     try {
-      const response = await fetch(`http://192.168.38.122:5000/api/StudentApi/gettestresult?userId=${userId}`);
+      const response = await fetch(`http://192.168.109.122:5000/api/StudentApi/gettestresult?userId=${username}`);
       const data = await response.json();
 
 let seen = new Set();
@@ -64,9 +64,9 @@ Order Entry   */}
       
           <TouchableOpacity
             style={styles.subject}
-            onPress={() => navigation.navigate("ResultScreen", { username: username,userId : userId,loggeduser:loggeduser,unitTestId:item.unitTestId,unitestName:item.unitTestName })}
+            onPress={() => navigation.navigate("ResultScreen", { username: username,loggeduser:loggeduser,unitTestId:item.unitTestId,unitestName:item.unitTestName })}
           >
-            <Text style={styles.title}>{item.unitTestName}</Text>
+            <Text style={styles.testname}>{item.unitTestName}</Text>
           </TouchableOpacity>
     </View>
   );
@@ -89,7 +89,7 @@ Order Entry   */}
 
   return (
     <View style={styles.container}>
-      <Text style={styles.heading}>Test Results</Text>
+      {/* <Text style={styles.heading}>Tests List</Text> */}
       <FlatList
         data={testResults}
         renderItem={renderItem}
@@ -109,9 +109,14 @@ const styles = StyleSheet.create({
     fontSize: 22,
     fontWeight: 'bold',
     marginBottom: 10,
+    marginLeft:120
   },
   row: {
     justifyContent: 'space-between',
+  },
+  testname:{
+    color:"blue",
+    fontSize:20
   },
   card: {
     flex: 1,

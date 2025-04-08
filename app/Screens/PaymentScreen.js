@@ -6,7 +6,7 @@ const PaymentScreen = ({ route }) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   
-  const { username, userId, loggeduser } = route.params;
+  const { username, loggeduser } = route.params || { username: "Guest", loggeduser: "Unknown" };
 
   useEffect(() => {
     fetchFeeDetails();
@@ -14,7 +14,7 @@ const PaymentScreen = ({ route }) => {
 
   const fetchFeeDetails = async () => {
     try {
-      const response = await fetch(`http://192.168.38.122:5000/api/StudentApi/getpaymenthistory?userId=${userId}`);
+      const response = await fetch(`http://192.168.109.122:5000/api/StudentApi/getpaymenthistory?userId=${username}`);
       const data = await response.json();
       var sortedData = data.sort((a, b) => a.installmentNum - b.installmentNum);
       setFees(sortedData); 
@@ -61,7 +61,6 @@ const PaymentScreen = ({ route }) => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.heading}>Student Fee Details</Text>
       <FlatList
         data={fees}
         renderItem={renderItem}
@@ -94,11 +93,13 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 18,
+    color:"blue",
+    marginBottom:5,
     fontWeight: 'bold',
   },
   amount: {
-    fontSize: 16,
-    color: 'gray',
+    fontSize: 17,
+    color: 'black',
   },
   status: {
     fontSize: 16,

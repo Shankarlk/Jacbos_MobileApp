@@ -27,7 +27,7 @@ const ChangePasswordScreen = ({route}) => {
         console.log("username",username);
         console.log("currentPassword",currentPassword);
         console.log("newPassword",newPassword);
-          const response = await fetch(`http://192.168.38.122:5000/api/StudentApi/changepassword?UserId=${userId}&userName=${username}&currentpassword=${currentPassword}&password=${newPassword}`);
+          const response = await fetch(`http://192.168.109.122:5000/api/StudentApi/changepassword?UserId=${userId}&userName=${username}&currentpassword=${currentPassword}&password=${newPassword}`);
         const text = await response.text();
         console.log("Raw response:", text); 
         const result = JSON.parse(text);

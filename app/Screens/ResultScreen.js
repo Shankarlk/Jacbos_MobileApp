@@ -13,7 +13,7 @@ function ResultScreen({ route, navigation }) {
   const [loading, setLoading] = useState(true);
     const [testResults, setTestResults] = useState([]);
   const [error, setError] = useState(null);
-  const { username, userId, loggeduser,unitTestId,unitestName } = route.params;
+  const { username, loggeduser,unitTestId,unitestName } = route.params;
 
   useEffect(() => {
     fetchTestResults();
@@ -29,7 +29,7 @@ function ResultScreen({ route, navigation }) {
   const fetchTestResults = async () => {
     try {
       const response = await fetch(
-        `http://192.168.38.122:5000/api/StudentApi/gettestresult?userId=${userId}`
+        `http://192.168.109.122:5000/api/StudentApi/gettestresult?userId=${username}`
       );
       const data = await response.json();
       let sortedData = data.sort((a, b) => a.unitTestName.localeCompare(b.courseName, undefined, { numeric: true }));
@@ -47,7 +47,7 @@ function ResultScreen({ route, navigation }) {
       {/* <Text style={styles.subject}>Standard : {item.standardName}</Text>
        <Text style={styles.subject}>Division : {item.divisionName}</Text> */}
       <Text style={styles.subject}>{item.courseName}</Text>
-       <Text style={styles.marks}>Marks: {item.courseMarks}</Text>
+       <Text style={styles.marks}>Obtained Marks: {item.courseMarks} / {item.totalMarks}</Text>
        <Text style={styles.marks}>Test Date: {formatDate(item.testDate)}    </Text>
 
     </View>
@@ -107,6 +107,7 @@ const styles = StyleSheet.create({
     elevation: 3,
   },
   subject: {
+    color:"blue",
     fontSize: 18,
     fontWeight: "bold",
   },

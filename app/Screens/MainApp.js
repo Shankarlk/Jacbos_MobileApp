@@ -67,7 +67,7 @@ function DrawerNavigator({ screenProps }) {
       <Drawer.Screen
         name="Request For Leave"
         component={LeaveManagementScreen}
-        initialParams={params}
+        initialParams={{ ...params, isClassteacher: true }}
         options={{
           drawerIcon: ({ color }) => <Icon name="folder-open" size={20} color={color} />,
         }}

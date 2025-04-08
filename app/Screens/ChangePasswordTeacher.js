@@ -35,7 +35,7 @@ export default function ChangePasswordTeacher({ route }) {
 
         try {
             const response = await fetch(
-                `http://192.168.109.122:5000/api/TimeTableApi/changepasswordteacher?UserId=${username}&currentpassword=${oldPassword}&password=${newPassword}`,
+                `http://192.168.109.122:5000/api/TimeTableApi/changepasswordteacher?UserId=${encodeURIComponent(username)}&currentpassword=${encodeURIComponent(oldPassword)}&password=${encodeURIComponent(newPassword)}`,
                 {
                     method: "GET",
                     headers: {
@@ -43,7 +43,7 @@ export default function ChangePasswordTeacher({ route }) {
                     },
                 }
             );
-
+console.log(`http://192.168.109.122:5000/api/TimeTableApi/changepasswordteacher?UserId=${username}&currentpassword=${oldPassword}&password=${newPassword}`);
             const data = await response.json();
             console.log("Response:", data);
 

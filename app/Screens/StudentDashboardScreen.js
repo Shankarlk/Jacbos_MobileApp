@@ -1,30 +1,28 @@
-import React, { useState, useEffect } from "react";
-import { useRef } from "react";
-import {
-  View,
-  Text,
-  FlatList,
-  TouchableOpacity,
-  ImageBackground,
-  StyleSheet,
-  Dimensions,
-} from "react-native";
-import axios from "axios";
-import {
-  Menu,
-  MenuOptions,
-  MenuOption,
-  MenuTrigger,
-} from "react-native-popup-menu";
-import * as Progress from "react-native-progress";
-import Icon from "react-native-vector-icons/FontAwesome";
+import React, { useEffect, useState } from 'react'; 
+import { View, Text, ImageBackground, StyleSheet } from "react-native";
 
-const { width } = Dimensions.get("window");
+const StudentDashboardScreen = ({ route }) => {
+  const { username, userId, loggeduser, isTeacher } = route.params;
+  const [student, setStudent] = useState(null);
+  const [loading, setLoading] = useState(true);
 
-const StudentDashboardScreen = ({ navigation, route }) => {
-  const { username,userId, loggeduser,isTeacher } = route.params;
-    const menuRef = useRef(null);
-    const [notificationMessage, setNotificationMessage] = useState("");
+  useEffect(() => {
+    const fetchStudentDetails = async () => {
+      try {
+        const response = await fetch(
+          `http://192.168.109.122:5000/api/StudentApi/getstudentdetails?userId=${username}`
+        );
+        const data = await response.json();
+        setStudent(data);
+        console.log("Fetched Student Data:", data);
+      } catch (error) {
+        console.error("Error fetching student details:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchStudentDetails();
+  }, [userId]);
 
   return (
     <ImageBackground
@@ -32,117 +30,24 @@ const StudentDashboardScreen = ({ navigation, route }) => {
       style={styles.background}
       resizeMode="stretch"
     >
-      <View style={styles.menuContainer}>
-        <TouchableOpacity onPress={() => menuRef.current.open()}>
-          <Icon name="bars" size={30} color="black" />
-        </TouchableOpacity>
-
-        <Menu ref={menuRef}>
-          <MenuTrigger />
-          <MenuOptions>
-            <MenuOption
-              onSelect={() =>
-                navigation.navigate("StudentDashboardScreen", {
-                  username: username,
-                  userId: userId,
-                  loggeduser: loggeduser,
-                })
-              }
-            >
-              <Text>Dashboard</Text>
-            </MenuOption>
-            <MenuOption
-              onSelect={() =>
-                navigation.navigate("ChangePasswordScreen", {
-                  username: username,
-                  userId: userId,
-                  loggeduser: loggeduser,
-                })
-              }
-            >
-              <Text>Change Password</Text>
-            </MenuOption>
-            <MenuOption
-              onSelect={() =>
-                navigation.navigate("StudentDetailsScreen", {
-                  username: username,
-                  userId: userId,
-                  loggeduser: loggeduser,
-                })
-              }
-            >
-              <Text>Student Details</Text>
-            </MenuOption>
-            <MenuOption
-              onSelect={() =>
-                navigation.navigate("HolidayEventListScreen", {
-                  username: username,
-                  userId: userId,
-                  loggeduser: loggeduser,
-                })
-              }
-            >
-              <Text>Holidays And Events List</Text>
-            </MenuOption>
-            <MenuOption
-              onSelect={() =>
-                navigation.navigate("PaymentScreen", {
-                  username: username,
-                  userId: userId,
-                  loggeduser: loggeduser,
-                })
-              }
-            >
-              <Text>Fee Details</Text>
-            </MenuOption>
-            <MenuOption
-              onSelect={() =>
-                navigation.navigate("TestResultScreen", {
-                  username: username,
-                  userId: userId,
-                  loggeduser: loggeduser,
-                })
-              }
-            >
-              <Text>Test/Academic Result</Text>
-            </MenuOption>
-            <MenuOption
-              onSelect={() =>
-                navigation.navigate("GalleryScreen", {
-                  username: username,
-                  userId: userId,
-                  loggeduser: loggeduser,
-                })
-              }
-            >
-              <Text>Gallery</Text>
-            </MenuOption>
-            <MenuOption
-              onSelect={() =>
-                navigation.navigate("LeaveManagementScreen", {
-                  userId: userId,
-                  isTeacher: isTeacher,
-                })
-              }
-            >
-              <Text>Leave Management</Text>
-            </MenuOption>
-            <MenuOption
-              onSelect={() =>
-                navigation.reset({
-                  index: 0,
-                  routes: [{ name: "Login" }],
-                })
-              }
-            >
-              <Text>Logout</Text>
-            </MenuOption>
-          </MenuOptions>
-        </Menu>
-      </View>
-
       <View style={styles.container}>
-        <Text style={styles.title}>{loggeduser}</Text>
+        {/* Show loading text until data is fetched */}
+        {loading ? (
+          <Text style={styles.loadingText}>Loading...</Text>
+        ) : student ? (
+          // Render Student Info Card only if student is not null
+          <View style={styles.studentCard}>
+            <Text style={styles.studentName}>
+              Student Name: {student.name} {student.surname}
+            </Text>
+            <View style={styles.infoRow}>
+              <Text style={styles.infoBox}>{student.standardName}</Text>
+              <Text style={styles.infoBox}>Section: {student.divisionName}</Text>
+            </View>
+          </View>
+        ) : (
+          <Text style={styles.errorText}>Student details not available</Text>
+        )}
       </View>
     </ImageBackground>
   );
@@ -150,96 +55,34 @@ const StudentDashboardScreen = ({ navigation, route }) => {
 
 const styles = StyleSheet.create({
   background: { flex: 1 },
-  container: { padding: 20 },
-  title: { fontSize: 24, fontWeight: "bold", marginBottom: 10 },
-  stats: { fontSize: 16, color: "gray" },
-  sectionTitle: { fontSize: 20, marginVertical: 10 },
-  scheduleList: { paddingVertical: 10 },
-  scheduleCard: {
-    backgroundColor: "#fff",
+  container: { padding: 20, alignItems: "center" },
+  loadingText: { fontSize: 18, color: "gray" },
+  errorText: { fontSize: 18, color: "red" },
+  studentCard: {
+    width: "95%",
+    backgroundColor: "white",
+    borderRadius: 8,
     padding: 15,
-    marginHorizontal: 5,
-    borderRadius: 8,
-    width: width * 0.4,
-    alignItems: "center",
-    shadowColor: "#000",
-    shadowOpacity: 0.2,
-    shadowOffset: { width: 0, height: 2 },
-  },
-  highlightedCard: {
-    backgroundColor: "#007BFF",
-  },
-  highlightedText: {
-    color: "#fff",
-  },
-  subject: { fontSize: 18, fontWeight: "bold" },
-  standard: { fontSize: 16, color: "gray" },
-  time: { fontSize: 14, marginTop: 5 },
-  button: {
-    backgroundColor: "#007BFF",
-    padding: 10,
-    width: "50%",
-    marginTop: 15,
-    borderRadius: 5,
+    elevation: 4,
     alignItems: "center",
   },
-  buttonContent: {
+  studentName: {
+    fontSize: 18,
+    fontWeight: "bold",
+    color: "black",
+    marginBottom: 10,
+  },
+  infoRow: {
     flexDirection: "row",
-    alignItems: "center",
+    justifyContent: "space-around",
+    width: "100%",
   },
-  buttonText: { color: "#fff", fontSize: 16, marginLeft: 3 },
-  courseDetails: {
-    marginTop: 10,
-    padding: 10,
-    backgroundColor: "rgba(255, 255, 255, 0.5)",
-    borderRadius: 8,
-    shadowColor: "#000",
-    shadowOpacity: 0.2,
-    shadowOffset: { width: 0, height: 2 },
-    alignItems: "center",
-  },
-  courseName: { fontSize: 24, fontWeight: "bold" },
-  materialName: { fontSize: 16, color: "gray", marginTop: 10 },
-  progressBar: {
-    marginTop: 3,
-    marginBottom: 5,
-  },
-  userInfoContainer: {
-    position: "absolute",
-    top: 40,
-    right: 20,
-    zIndex: 1,
-    alignItems: "center",
-    flexDirection: "row",
-  },
-  menuContainer: {
-    position: "absolute",
-    top: 40,
-    right: 20,
-    zIndex: 1,
-  },
-  menuButton: {
-    padding: 10,
-    backgroundColor: "white",
-    borderRadius: 5,
-  },
-  menuOptions: {
-    backgroundColor: "white",
+  infoBox: {
+    backgroundColor: "#f0f0f0",
     padding: 10,
     borderRadius: 5,
-    elevation: 5, // Adds shadow (Android)
-    shadowColor: "#000", // Adds shadow (iOS)
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.2,
-  },
-  menuItem: {
-    flexDirection: "row",
-    alignItems: "center",
-    paddingVertical: 10,
-  },
-  menuText: {
     fontSize: 16,
-    marginLeft: 10,
+    fontWeight: "bold",
   },
 });
 
