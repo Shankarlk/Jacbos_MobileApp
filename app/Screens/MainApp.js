@@ -6,6 +6,7 @@ import DashboardScreen from "./DashboardScreen";
 import SubjectStackNavigator from "./SubjectStackNavigator";
 import ManualQuestionScreen from "./ManualQuestionScreen";
 import UpdateStudentMarks from "./UpdateStudentMarksScreen";
+import StudentMarksStack from "./StudentMarksStack";
 import StandardMessageStack from "./StandardMessageStack";
 import AttendanceStack from "./AttendanceStack";
 import StudentLeaveManagementTeacher from "./StudentLeaveManagementTeacher";
@@ -85,7 +86,7 @@ function DrawerNavigator({ screenProps }) {
         component={AttendanceStack}
         initialParams={params}
         options={{
-          drawerIcon: ({ color }) => <Icon name="list-alt" size={20} color={color} />,
+          drawerIcon: ({ color }) => <Icon name="check-square-o" size={20} color={color} />,
         }}
       />
       <Drawer.Screen
@@ -118,6 +119,14 @@ function DrawerNavigator({ screenProps }) {
         initialParams={params}
         options={{
           drawerIcon: ({ color }) => <Icon name="graduation-cap" size={20} color={color} />,
+        }}
+      />
+      <Drawer.Screen
+        name="Student Marks List"
+        component={StudentMarksStack}
+        initialParams={params}
+        options={{
+          drawerIcon: ({ color }) => <Icon name="bar-chart" size={20} color={color} />,
         }}
       />
      <Drawer.Screen 
