@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { View, Text, FlatList, ScrollView, StyleSheet, ActivityIndicator,TouchableOpacity } from "react-native";
+import BASE_URL from "./apiConfig";
 
 function SubjectContentScreen({ navigation,route }) {
     const [events, setEvents] = useState([]);
@@ -12,8 +13,8 @@ function SubjectContentScreen({ navigation,route }) {
 
      const fetchEventDetails = async () => {
         try {      
-          // console.log(`http://192.168.109.122:5000/api/TimeTableApi/getallteachercourse?userId=${username}`);
-          const eventResponse = await fetch(`http://192.168.109.122:5000/api/TimeTableApi/getallteachercourse?userId=${username}`);
+          // console.log(`${BASE_URL}/api/TimeTableApi/getallteachercourse?userId=${username}`);
+          const eventResponse = await fetch(`${BASE_URL}/api/TimeTableApi/getallteachercourse?userId=${username}`);
           const eventData = await eventResponse.json();
           console.log(eventData);
           setEvents(eventData);

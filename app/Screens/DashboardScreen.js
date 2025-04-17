@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { View, Text, FlatList, TouchableOpacity, ImageBackground, StyleSheet, Dimensions } from "react-native";
 import axios from "axios";
 import Icon from "react-native-vector-icons/FontAwesome";
+import BASE_URL from "./apiConfig";
 
 const { width } = Dimensions.get("window");
 
@@ -22,7 +23,7 @@ const DashboardScreen = ({ navigation, route }) => {
         console.error("User ID is missing");
         return;
       }
-      const response = await axios.get("http://192.168.109.122:5000/api/TimeTableApi/gettimetable", {
+      const response = await axios.get(`${BASE_URL}/api/TimeTableApi/gettimetable`, {
         params: { userId: username },
       });
       if (response.data && response.data.schedule) {
@@ -49,8 +50,18 @@ const DashboardScreen = ({ navigation, route }) => {
         <View style={styles.header}>
           {/* <Text style={styles.title}>{loggeduser}</Text> */}
         </View>
-        <Text style={styles.sectionTitle}>Daily Schedules</Text>
-        <FlatList data={schedule} renderItem={renderScheduleItem} keyExtractor={(item, index) => index.toString()} numColumns={2} contentContainerStyle={styles.scheduleList} />
+        <Text style={styles.sectionTitle}>Daily Schedule</Text>
+        {schedule.length === 0 ? (
+        <Text style={styles.noDataText}>No Schedules Found</Text>
+        ) : (
+          <FlatList
+            data={schedule}
+            renderItem={renderScheduleItem}
+            keyExtractor={(item, index) => index.toString()}
+            numColumns={2}
+            contentContainerStyle={styles.scheduleList}
+          />
+        )}
       </View>
     </ImageBackground>
   );
@@ -58,7 +69,11 @@ const DashboardScreen = ({ navigation, route }) => {
 
 const styles = StyleSheet.create({
   background: { flex: 1, backgroundColor: "#F5F5F5" },
-  container: { padding: 20 },
+  container: { padding: 20 },noDataText: {
+    fontSize: 16,
+    textAlign: 'center',
+    marginTop: 20,
+  },
   header: { flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginBottom: 20 },
   title: { fontSize: 24, fontWeight: "bold" },
   menuButton: { padding: 10, backgroundColor: "white", borderRadius: 5 },

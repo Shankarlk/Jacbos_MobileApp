@@ -4,6 +4,7 @@ import {
     TextInput, TouchableOpacity 
 } from "react-native";
 import DateTimePicker from "@react-native-community/datetimepicker";
+import BASE_URL from "./apiConfig";
 
 export default function OverallStudentAttendance({ route }) {
     const { username } = route.params || { username: "Guest" };
@@ -27,7 +28,7 @@ export default function OverallStudentAttendance({ route }) {
     const fetchAttendanceData = async () => {
         try {
             const response = await fetch(
-                `http://192.168.109.122:5000/api/TimeTableApi/getoverallattendance?userId=${username}`
+                `${BASE_URL}/api/TimeTableApi/getoverallattendance?userId=${username}`
             );
             const data = await response.json();
             console.log("Attendance Data: ", data);

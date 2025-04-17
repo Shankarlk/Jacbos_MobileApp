@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { View, Text, TextInput, Button, Alert, StyleSheet } from "react-native";
 import axios from "axios";
+import BASE_URL from "./apiConfig";
 
 const ForgotPasswordScreen = ({ navigation,route }) => {
   const { username,userId, loggeduser } = route.params;
@@ -23,7 +24,7 @@ const ForgotPasswordScreen = ({ navigation,route }) => {
     }
 
     try {
-      const response = await axios.get('http://192.168.38.122:5000/api/StudentApi/sendemailotp', {
+      const response = await axios.get(`${BASE_URL}/api/StudentApi/sendemailotp`, {
         email: emailOrPhone,
       });
 
@@ -58,7 +59,7 @@ const ForgotPasswordScreen = ({ navigation,route }) => {
     }
 
     try {
-      await axios.get('http://192.168.38.122:5000/api/StudentApi/forgotpassword', {
+      await axios.get(`${BASE_URL}/api/StudentApi/forgotpassword`, {
         UserId: userId,
         password: newPassword
       });

@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, ScrollView, TouchableOpacity, ActivityIndicator, Image } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import BASE_URL from "./apiConfig";
 
 const StudentDetailsScreen = ({ route }) => {
     const navigation = useNavigation();
@@ -16,7 +17,7 @@ const StudentDetailsScreen = ({ route }) => {
     useEffect(() => {
         const fetchStudentDetails = async () => {
             try {
-                const response = await fetch(`http://192.168.109.122:5000/api/StudentApi/getstudentdetails?userId=${username}`);
+                const response = await fetch(`${BASE_URL}/api/StudentApi/getstudentdetails?userId=${username}`);
                 const data = await response.json();
                 setStudent(data);
             } catch (error) {

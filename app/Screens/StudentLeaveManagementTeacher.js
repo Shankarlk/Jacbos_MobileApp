@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { View, Text, FlatList, ActivityIndicator, TextInput, TouchableOpacity, StyleSheet } from "react-native";
 import DateTimePicker from "@react-native-community/datetimepicker";
+import BASE_URL from "./apiConfig";
 
 const StudentLeaveManagementTeacher = ({ route }) => {
     const { username } = route.params || { username: "Guest" };
@@ -26,7 +27,7 @@ const StudentLeaveManagementTeacher = ({ route }) => {
     const fetchStudentLeaveRequests = async () => {
         try {
             const response = await fetch(
-                `http://192.168.109.122:5000/api/TimeTableApi/getallstudentrequest?userId=${username}`
+                `${BASE_URL}/api/TimeTableApi/getallstudentrequest?userId=${username}`
             );
             const data = await response.json();
             console.log("Leave Requests: ", data);

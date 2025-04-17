@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { View, TextInput, Button, Alert, Linking, StyleSheet,Text } from 'react-native';
+import BASE_URL from "./apiConfig";
 
 const MessageScreen = ({route}) => {
     const { student } = route.params;
@@ -12,7 +13,7 @@ const MessageScreen = ({route}) => {
             return;
         }
         console.log(student.id);
-        const eventResponse = await fetch(`http://192.168.38.122:5000/api/TimeTableApi/sendwatextparent?id=${student.id}&message=${message}`);
+        const eventResponse = await fetch(`${BASE_URL}/api/TimeTableApi/sendwatextparent?id=${student.id}&message=${message}`);
         const eventData = await eventResponse.json();
         console.log(eventData);
         if(eventData.Message == undefined){

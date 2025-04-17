@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { View, Text, FlatList, ScrollView, StyleSheet, ActivityIndicator,TouchableOpacity } from "react-native";
+import BASE_URL from "./apiConfig";
 
 function GalleryScreen({ navigation,route }) {
     const [events, setEvents] = useState([]);
@@ -13,7 +14,7 @@ function GalleryScreen({ navigation,route }) {
 
      const fetchEventDetails = async () => {
         try {
-          const studentResponse = await fetch(`http://192.168.109.122:5000/api/StudentApi/getstudentdetails?userId=${username}`);
+          const studentResponse = await fetch(`${BASE_URL}/api/StudentApi/getstudentdetails?userId=${username}`);
           const studentData = await studentResponse.json();
           console.log(studentData);
           if (!studentData || !studentData.id) {
@@ -24,7 +25,7 @@ function GalleryScreen({ navigation,route }) {
           console.log(StandardId);
           SetStandard(StandardId);
       
-          const eventResponse = await fetch(`http://192.168.109.122:5000/api/GalleryApi/getgalleryevents?StandardId=${StandardId}`);
+          const eventResponse = await fetch(`${BASE_URL}/api/GalleryApi/getgalleryevents?StandardId=${StandardId}`);
           const eventData = await eventResponse.json();
           console.log(eventData);
           const uniqueEvents = eventData

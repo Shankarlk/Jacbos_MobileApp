@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { View, Text, FlatList, ActivityIndicator, StyleSheet } from "react-native";
+import BASE_URL from "./apiConfig";
 
 const UnitTestScreen = ({ route }) => {
     const { username } = route.params || { username: "Guest" };
@@ -13,7 +14,7 @@ const UnitTestScreen = ({ route }) => {
     const fetchUnitTestRecords = async () => {
         try {
             const response = await fetch(
-                `http://192.168.109.122:5000/api/TimeTableApi/getallunittestdetails`
+                `${BASE_URL}/api/TimeTableApi/getallunittestdetails`
             );
             const data = await response.json();
             console.log("Unit Test Records: ", data);

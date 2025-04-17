@@ -8,6 +8,7 @@ import {
     Alert,
 } from "react-native";
 import Feather from "react-native-vector-icons/Feather"; // Import Feather icons
+import BASE_URL from "./apiConfig";
 
 export default function ChangePasswordTeacher({ route }) {
     const { username } = route.params || { username: "Guest" };
@@ -35,7 +36,7 @@ export default function ChangePasswordTeacher({ route }) {
 
         try {
             const response = await fetch(
-                `http://192.168.109.122:5000/api/TimeTableApi/changepasswordteacher?UserId=${encodeURIComponent(username)}&currentpassword=${encodeURIComponent(oldPassword)}&password=${encodeURIComponent(newPassword)}`,
+                `${BASE_URL}/api/TimeTableApi/changepasswordteacher?UserId=${encodeURIComponent(username)}&currentpassword=${encodeURIComponent(oldPassword)}&password=${encodeURIComponent(newPassword)}`,
                 {
                     method: "GET",
                     headers: {
@@ -43,9 +44,9 @@ export default function ChangePasswordTeacher({ route }) {
                     },
                 }
             );
-console.log(`http://192.168.109.122:5000/api/TimeTableApi/changepasswordteacher?UserId=${username}&currentpassword=${oldPassword}&password=${newPassword}`);
+// console.log(`${BASE_URL}/api/TimeTableApi/changepasswordteacher?UserId=${username}&currentpassword=${oldPassword}&password=${newPassword}`);
             const data = await response.json();
-            console.log("Response:", data);
+            // console.log("Response:", data);
 
             if (data.message ==="Saved!") {
                 Alert.alert("Success", "Password changed successfully");

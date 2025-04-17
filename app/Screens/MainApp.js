@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { View, Text, Image, StyleSheet, TouchableOpacity } from "react-native";
 import { createDrawerNavigator, DrawerContentScrollView, DrawerItemList } from "@react-navigation/drawer";
 import { useNavigation } from "@react-navigation/native";
@@ -16,6 +16,7 @@ import OverallStudentAttendance from "./OverallStudentAttendance";
 import ChangePasswordTeacher from "./ChangePasswordTeacher";
 import UnitTestScreen from "./UnitTestScreen";
 import Icon from "react-native-vector-icons/FontAwesome";
+import BASE_URL from "./apiConfig";
 
 const Drawer = createDrawerNavigator();
 
@@ -27,7 +28,7 @@ const CustomDrawerContent = (props) => {
       {/* Top Section - Logo */}
       <View style={styles.header}>
         <Image source={require("../assets/dummy-school-logo.png")} style={styles.logo} />
-        <Text style={{ fontWeight: "bold" }}>Om National Public School, Ranebennur</Text>
+        {/* <Text style={{ fontWeight: "bold" }}>Om National Public School, Ranebennur</Text> */}
       </View>
 
       {/* Drawer Items */}
@@ -45,129 +46,162 @@ const CustomDrawerContent = (props) => {
 };
 
 function DrawerNavigator({ screenProps }) {
-    const params = screenProps?.params || {};
-    console.log("DrawerNavigator",params);
-  return (
-    <Drawer.Navigator
-      initialRouteName="Dashboard"
-      drawerContent={(props) => <CustomDrawerContent {...props} />}
-      screenOptions={{
-        headerShown: true,
-        drawerActiveBackgroundColor: "#E3E3E3",
-        drawerLabelStyle: { fontSize: 16 },
-      }}
-    >
-      <Drawer.Screen
-        name="Dashboard"
-        component={DashboardScreen}
-        initialParams={params}
-        options={{
-          drawerIcon: ({ color }) => <Icon name="dashboard" size={20} color={color} />,
+  const params = screenProps?.params || {};
+  const isClassteacher = screenProps?.isClassteacher ;
+    console.log("DrawerNavigator",isClassteacher);
+    return (
+      <Drawer.Navigator
+        initialRouteName="Dashboard"
+        drawerContent={(props) => <CustomDrawerContent {...props} />}
+        screenOptions={{
+          headerShown: true,
+          drawerActiveBackgroundColor: "#E3E3E3",
+          drawerLabelStyle: { fontSize: 16 },
         }}
-      />
-      <Drawer.Screen
-        name="Request For Leave"
-        component={LeaveManagementScreen}
-        initialParams={{ ...params, isClassteacher: true }}
-        options={{
-          drawerIcon: ({ color }) => <Icon name="folder-open" size={20} color={color} />,
-        }}
-      />
-      <Drawer.Screen
-        name="Student Leave Management"
-        component={StudentLeaveManagementTeacher}
-        initialParams={params}
-        options={{
-          drawerIcon: ({ color }) => <Icon name="users" size={20} color={color} />,
-        }}
-      />
-      <Drawer.Screen
-        name="Update Student Attendance"
-        component={AttendanceStack}
-        initialParams={params}
-        options={{
-          drawerIcon: ({ color }) => <Icon name="check-square-o" size={20} color={color} />,
-        }}
-      />
-      <Drawer.Screen
-        name="Overall Attendance"
-        component={OverallStudentAttendance}
-        initialParams={params}
-        options={{
-          drawerIcon: ({ color }) => <Icon name="globe" size={20} color={color} />,
-        }}
-      />
-      <Drawer.Screen
-        name="Send Message To Parents"
-        component={StandardMessageStack}
-        initialParams={params}
-        options={{
-          drawerIcon: ({ color }) => <Icon name="comments" size={20} color={color} />,
-        }}
-      />
-      <Drawer.Screen
-        name="Test List"
-        component={UnitTestScreen}
-        initialParams={params}
-        options={{
-          drawerIcon: ({ color }) => <Icon name="list-alt" size={20} color={color} />,
-        }}
-      />
-      <Drawer.Screen
-        name="Update Student Marks"
-        component={UpdateStudentMarks}
-        initialParams={params}
-        options={{
-          drawerIcon: ({ color }) => <Icon name="graduation-cap" size={20} color={color} />,
-        }}
-      />
-      <Drawer.Screen
-        name="Student Marks List"
-        component={StudentMarksStack}
-        initialParams={params}
-        options={{
-          drawerIcon: ({ color }) => <Icon name="bar-chart" size={20} color={color} />,
-        }}
-      />
-     <Drawer.Screen 
-        name="Auto Generate Question Paper"
-        initialParams={params}
-        component={QuestionStackNavigator}  
-        options={{
-            drawerIcon: ({ color }) => <Icon name="file-text" size={20} color={color} />,
-        }}
+      >
+        <Drawer.Screen
+          name="Dashboard"
+          component={DashboardScreen}
+          initialParams={params}
+          options={{
+            drawerIcon: ({ color }) => <Icon name="dashboard" size={20} color={color} />,
+          }}
         />
-      <Drawer.Screen
-        name="Generate Question Paper Manually"
-        component={ManualQuestionScreen}
-        initialParams={params}
-        options={{
-          drawerIcon: ({ color }) => <Icon name="pencil" size={20} color={color} />,
-        }}
-      />
-      <Drawer.Screen
-        name="Change Password "
-        component={ChangePasswordTeacher}
-        initialParams={params}
-        options={{
-          drawerIcon: ({ color }) => <Icon name="lock" size={20} color={color} />,
-        }}
-      />
-      <Drawer.Screen
-         name="Subject Content"
-         component={SubjectStackNavigator} 
-         initialParams={params}
-         options={{
-             drawerIcon: ({ color }) => <Icon name="book" size={20} color={color} />,
-         }}
-         />
-    </Drawer.Navigator>
-  );
+        <Drawer.Screen
+          name="Request For Leave"
+          component={LeaveManagementScreen}
+          initialParams={{ ...params, isClassteacher: true }}
+          options={{
+            drawerIcon: ({ color }) => <Icon name="folder-open" size={20} color={color} />,
+          }}
+        />
+  
+        {/* Conditional class teacher screens */}
+        {isClassteacher && (
+          <>
+            <Drawer.Screen
+              name="Student Leave Management"
+              component={StudentLeaveManagementTeacher}
+              initialParams={params}
+              options={{
+                drawerIcon: ({ color }) => <Icon name="users" size={20} color={color} />,
+              }}
+            />
+            <Drawer.Screen
+              name="Update Student Attendance"
+              component={AttendanceStack}
+              initialParams={params}
+              options={{
+                drawerIcon: ({ color }) => <Icon name="check-square-o" size={20} color={color} />,
+              }}
+            />
+            <Drawer.Screen
+              name="Overall Attendance"
+              component={OverallStudentAttendance}
+              initialParams={params}
+              options={{
+                drawerIcon: ({ color }) => <Icon name="globe" size={20} color={color} />,
+              }}
+            />
+          </>
+        )}
+  
+        <Drawer.Screen
+          name="Send Message To Parents"
+          component={StandardMessageStack}
+          initialParams={params}
+          options={{
+            drawerIcon: ({ color }) => <Icon name="comments" size={20} color={color} />,
+          }}
+        />
+        <Drawer.Screen
+          name="Test List"
+          component={UnitTestScreen}
+          initialParams={params}
+          options={{
+            drawerIcon: ({ color }) => <Icon name="list-alt" size={20} color={color} />,
+          }}
+        />
+        <Drawer.Screen
+          name="Update Student Marks"
+          component={UpdateStudentMarks}
+          initialParams={params}
+          options={{
+            drawerIcon: ({ color }) => <Icon name="graduation-cap" size={20} color={color} />,
+          }}
+        />
+        <Drawer.Screen
+          name="Student Marks List"
+          component={StudentMarksStack}
+          initialParams={params}
+          options={{
+            drawerIcon: ({ color }) => <Icon name="bar-chart" size={20} color={color} />,
+          }}
+        />
+        <Drawer.Screen
+          name="Auto Generate Question Paper"
+          initialParams={params}
+          component={QuestionStackNavigator}
+          options={{
+            drawerIcon: ({ color }) => <Icon name="file-text" size={20} color={color} />,
+          }}
+        />
+        <Drawer.Screen
+          name="Generate Question Paper Manually"
+          component={ManualQuestionScreen}
+          initialParams={params}
+          options={{
+            drawerIcon: ({ color }) => <Icon name="pencil" size={20} color={color} />,
+          }}
+        />
+        <Drawer.Screen
+          name="Change Password "
+          component={ChangePasswordTeacher}
+          initialParams={params}
+          options={{
+            drawerIcon: ({ color }) => <Icon name="lock" size={20} color={color} />,
+          }}
+        />
+        <Drawer.Screen
+          name="Subject Content"
+          component={SubjectStackNavigator}
+          initialParams={params}
+          options={{
+            drawerIcon: ({ color }) => <Icon name="book" size={20} color={color} />,
+          }}
+        />
+      </Drawer.Navigator>
+    );
+  
 }
 
 export default function MainApp({ route }) {
     console.log("MainApp Received params:", route?.params);
-  return <DrawerNavigator     screenProps={{ params: route?.params }}  />;
+    const { username, loggeduser } = route.params;
+      const [student, setStudent] = React.useState(null);
+      const [loading, setLoading] = React.useState(true);
+      const fetchStudentDetails = async () => {
+        // const { username } = route.params;
+        try {
+          const response = await fetch(
+            `${BASE_URL}/api/TimeTableApi/getallteacherstandard?userId=${username}`
+          );
+          const data = await response.json();
+          const filteredData = data.filter(item => item.isClassTeacher === true);
+          setStudent((filteredData.length === 0)?false:true);
+          console.log('teacher data',filteredData);
+          console.log('teacher data',student);
+        } catch (error) {
+          console.error("Error fetching teacher details:", error);
+        } finally {
+          setLoading(false);
+        }
+      };
+        useEffect(() => {
+          fetchStudentDetails();
+        }, []);
+        if (loading) return null; 
+  return <DrawerNavigator     screenProps={{ params: route?.params,isClassteacher:student }}  />;
 }
 
 const styles = StyleSheet.create({

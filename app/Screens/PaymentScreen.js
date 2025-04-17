@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, ActivityIndicator, FlatList } from 'react-native';
+import BASE_URL from "./apiConfig";
 
 const PaymentScreen = ({ route }) => {
   const [fees, setFees] = useState([]);
@@ -14,7 +15,7 @@ const PaymentScreen = ({ route }) => {
 
   const fetchFeeDetails = async () => {
     try {
-      const response = await fetch(`http://192.168.109.122:5000/api/StudentApi/getpaymenthistory?userId=${username}`);
+      const response = await fetch(`${BASE_URL}/api/StudentApi/getpaymenthistory?userId=${username}`);
       const data = await response.json();
       var sortedData = data.sort((a, b) => a.installmentNum - b.installmentNum);
       setFees(sortedData); 

@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { View, TextInput, Button, Alert, Linking, StyleSheet,Text,TouchableOpacity } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import DropDownPicker from "react-native-dropdown-picker";
+import BASE_URL from "./apiConfig";
 
 const LeaveManagementScreen = ({route}) => {
   const { username, loggeduser,isClassteacher } = route.params || { username: "Guest", loggeduser: "Unknown" };
@@ -84,7 +85,7 @@ const LeaveManagementScreen = ({route}) => {
 
             const fromDt = new Date(fromDate).toISOString();
             const toDt = new Date(toDate).toISOString();
-            const response = await fetch("http://192.168.109.122:5000/api/TimeTableApi/leavemanagement", {
+            const response = await fetch(`${BASE_URL}/api/TimeTableApi/leavemanagement`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json"
@@ -117,7 +118,7 @@ const LeaveManagementScreen = ({route}) => {
                     fromDate: ${fromDt},
                     toDate: ${toDt}
                 }`);
-            const response = await fetch("http://192.168.109.122:5000/api/StudentApi/studentleavemanagement", {
+            const response = await fetch(`${BASE_URL}/api/StudentApi/studentleavemanagement`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json"

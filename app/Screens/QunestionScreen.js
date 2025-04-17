@@ -9,6 +9,7 @@ import { shareAsync } from 'expo-sharing';
 import * as FileSystem from 'expo-file-system';
 import Toast from "react-native-toast-message";
 import { useNavigation } from "@react-navigation/native";
+import BASE_URL from "./apiConfig";
 
 const QunestionScreen = ({route}) => {
   console.log("Question Received params:", route.params);
@@ -36,7 +37,7 @@ const QunestionScreen = ({route}) => {
   
   
   useEffect(() => {
-    const API_BASE_URL = "http://192.168.109.122:5000"; // Ensure correct IP
+    const API_BASE_URL = `${BASE_URL}`; // Ensure correct IP
   
     const fetchData = async () => {
       try {
@@ -51,7 +52,7 @@ const QunestionScreen = ({route}) => {
         const courses = await courseResponse.json();
         setCoursesData(courses.length > 0 ? [{ value: 0, text: "Select Course" }, ...courses] : []);
   
-        const unitTestResponse = await fetch(`${API_BASE_URL}/api/TimeTableApi/getallunittest`);
+        const unitTestResponse = await fetch(`${API_BASE_URL}/api/TimeTableApi/getallunittest?userId=${encodeURIComponent(username)}`);
         if (!unitTestResponse.ok) throw new Error("Failed to fetch unit tests");
         const unitTests = await unitTestResponse.json();
         setUnitTestsData(unitTests.length > 0 ? [{ value: 0, text: "Select Unit Test" }, ...unitTests] : []);
@@ -82,7 +83,7 @@ const QunestionScreen = ({route}) => {
               }
               console.log(selectedChapters);
               const selectedChaptersString = selectedChapters.join(", ");
-        const response = await axios.get('http://192.168.109.122:5000/api/QuestionApi/generatequenstion', {
+        const response = await axios.get(`${BASE_URL}/api/QuestionApi/generatequenstion`, {
             params: { 
               courseId: language,
               standardId: standard,
@@ -127,7 +128,7 @@ const QunestionScreen = ({route}) => {
     // Fetch chapters based on selected course
     try {
       const response = await fetch(
-        `http://192.168.109.122:5000/api/QuestionApi/getchapterName?standardId=${standard}&courseId=${itemValue}`
+        `${BASE_URL}/api/QuestionApi/getchapterName?standardId=${standard}&courseId=${itemValue}`
       );
       const chapters = await response.json();
       const formattedChapters = chapters.map((chapter, index) => ({
@@ -153,7 +154,7 @@ const QunestionScreen = ({route}) => {
     }
 
     try {
-      const response = await axios.get(`http://192.168.109.122:5000/api/QuestionApi/getunitbyid?unitTestId=${itemValue}`);
+      const response = await axios.get(`${BASE_URL}/api/QuestionApi/getunitbyid?unitTestId=${itemValue}`);
       const data = response.data;
       console.log(data);  
       setMaxMarks(data.maxMarks ? data.maxMarks.toString() : ""); 

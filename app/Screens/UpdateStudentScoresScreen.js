@@ -5,6 +5,7 @@ import DropDownPicker from "react-native-dropdown-picker";
 import RNPickerSelect from "react-native-dropdown-picker";
 import { useNavigation } from "@react-navigation/native";
 import Toast from "react-native-toast-message";
+import BASE_URL from "./apiConfig";
 
 const UpdateStudentScoresScreen = ({ route }) => {
   const navigation = useNavigation();
@@ -20,7 +21,7 @@ const UpdateStudentScoresScreen = ({ route }) => {
 
   const fetchStudents = async () => {
     try {
-      const response = await fetch(`http://192.168.109.122:5000/api/UpdateStudentMarksApi/getstudents?Id=${unitTestId}`);
+      const response = await fetch(`${BASE_URL}/api/UpdateStudentMarksApi/getstudents?Id=${unitTestId}`);
       if (!response.ok) throw new Error(`HTTP Error! Status: ${response.status}`);
 
       const data = await response.json();
@@ -38,7 +39,7 @@ const UpdateStudentScoresScreen = ({ route }) => {
 
   const fetchCourses = async () => {
     try {
-      const response = await fetch(`http://192.168.109.122:5000/api/TimeTableApi/getallcourses?userId=${encodeURIComponent(username)}`);
+      const response = await fetch(`${BASE_URL}/api/TimeTableApi/getallcourses?userId=${encodeURIComponent(username)}`);
       if (!response.ok) throw new Error("Failed to fetch courses");
 
       const data = await response.json();
@@ -78,7 +79,7 @@ const UpdateStudentScoresScreen = ({ route }) => {
 
       console.log("Sending Data:", payload);
 
-      const response = await fetch("http://192.168.109.122:5000/api/UpdateStudentMarksApi/savestudentScores", {
+      const response = await fetch(`${BASE_URL}/api/UpdateStudentMarksApi/savestudentScores`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),

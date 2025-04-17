@@ -8,6 +8,7 @@ import { shareAsync } from 'expo-sharing';
 import * as FileSystem from 'expo-file-system';
 import Toast from "react-native-toast-message";
 import { useNavigation } from "@react-navigation/native";
+import BASE_URL from "./apiConfig";
 
 const ChangePasswordScreen = ({route}) => {
   const { username,userId, loggeduser } = route.params;
@@ -27,7 +28,7 @@ const ChangePasswordScreen = ({route}) => {
         console.log("username",username);
         console.log("currentPassword",currentPassword);
         console.log("newPassword",newPassword);
-          const response = await fetch(`http://192.168.109.122:5000/api/StudentApi/changepassword?UserId=${userId}&userName=${username}&currentpassword=${currentPassword}&password=${newPassword}`);
+          const response = await fetch(`${BASE_URL}/api/StudentApi/changepassword?UserId=${userId}&userName=${username}&currentpassword=${currentPassword}&password=${newPassword}`);
         const text = await response.text();
         console.log("Raw response:", text); 
         const result = JSON.parse(text);

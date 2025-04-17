@@ -1,10 +1,11 @@
 import React from "react";
 import { View, Image, Text } from "react-native";
 import { Video } from "expo-av";
+import BASE_URL from "./apiConfig";
 
 function FileViewerScreen({ route }) {
   const { file } = route.params || {};
-  const fileUrl = `http://192.168.109.122:5000/api/GalleryApi/downloadthefile?location=${encodeURIComponent(file)}`;
+  const fileUrl = `${BASE_URL}/api/GalleryApi/downloadthefile?location=${encodeURIComponent(file)}`;
 
   return (
     <View style={{ flex: 1 }}>

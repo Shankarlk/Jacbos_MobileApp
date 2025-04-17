@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'; 
 import { View, Text, ImageBackground, StyleSheet } from "react-native";
+import BASE_URL from "./apiConfig";
 
 const StudentDashboardScreen = ({ route }) => {
   const { username, userId, loggeduser, isTeacher } = route.params;
@@ -10,7 +11,7 @@ const StudentDashboardScreen = ({ route }) => {
     const fetchStudentDetails = async () => {
       try {
         const response = await fetch(
-          `http://192.168.109.122:5000/api/StudentApi/getstudentdetails?userId=${username}`
+          `${BASE_URL}/api/StudentApi/getstudentdetails?userId=${username}`
         );
         const data = await response.json();
         setStudent(data);

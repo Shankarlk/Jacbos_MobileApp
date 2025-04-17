@@ -8,6 +8,7 @@ import {
   ActivityIndicator,
   TouchableOpacity,
 } from "react-native";
+import BASE_URL from "./apiConfig";
 
 function ResultScreen({ route, navigation }) {
   const [loading, setLoading] = useState(true);
@@ -29,7 +30,7 @@ function ResultScreen({ route, navigation }) {
   const fetchTestResults = async () => {
     try {
       const response = await fetch(
-        `http://192.168.109.122:5000/api/StudentApi/gettestresult?userId=${username}`
+        `${BASE_URL}/api/StudentApi/gettestresult?userId=${username}`
       );
       const data = await response.json();
       let sortedData = data.sort((a, b) => a.unitTestName.localeCompare(b.courseName, undefined, { numeric: true }));

@@ -9,6 +9,7 @@ import * as FileSystem from 'expo-file-system';
 import Toast from "react-native-toast-message";
 import DropDownPicker from "react-native-dropdown-picker";
 import { useNavigation } from "@react-navigation/native";
+import BASE_URL from "./apiConfig";
 
 const ManualQuestionScreen = ({ route }) => {
   const { username, loggeduser } = route.params || { username: "Guest", loggeduser: "Unknown" };
@@ -84,7 +85,7 @@ const ManualQuestionScreen = ({ route }) => {
     // Fetch chapters based on selected course
     try {
       const response = await fetch(
-        `http://192.168.109.122:5000/api/QuestionApi/getchapterName?standardId=${standard}&courseId=${itemValue}`
+        `${BASE_URL}/api/QuestionApi/getchapterName?standardId=${standard}&courseId=${itemValue}`
       );
       const chapters = await response.json();
       const formattedChapters = chapters.map((chapter, index) => ({
@@ -104,19 +105,19 @@ const ManualQuestionScreen = ({ route }) => {
     const fetchData = async () => {
       try {
         const standardResponse = await fetch(
-          `http://192.168.109.122:5000/api/TimeTableApi/getallstandard?userId=${encodeURIComponent(username)}`
+          `${BASE_URL}/api/TimeTableApi/getallstandard?userId=${encodeURIComponent(username)}`
         );
         const standards = await standardResponse.json();
         setStandardsData([{ value: 0, text: "Select Standard" }, ...standards]);
         const courseResponse = await fetch(
-          `http://192.168.109.122:5000/api/TimeTableApi/getallcourses?userId=${encodeURIComponent(username)}`
+          `${BASE_URL}/api/TimeTableApi/getallcourses?userId=${encodeURIComponent(username)}`
         );
         const courses = await courseResponse.json();
         setCoursesData([{ value: 0, text: "Select Course" }, ...courses]);
         // setCoursesData(courses);
 
         const unitTestResponse = await fetch(
-          "http://192.168.109.122:5000/api/TimeTableApi/getallunittest"
+          `${BASE_URL}/api/TimeTableApi/getallunittest?userId=${encodeURIComponent(username)}`
         );
         const unitTests = await unitTestResponse.json();
         setUnitTestsData([{ value: 0, text: "Select Unit Test" }, ...unitTests]);
@@ -132,7 +133,7 @@ const ManualQuestionScreen = ({ route }) => {
   const handleGenerateQuestions = async () => {
     try {
       // Replace with your actual API URL
-      // const response = await fetch(`http://192.168.109.122:5000/api/TimeTableApi/generatequenstion?courseId=${language}&standardId=${standard}&numQuestions=${numQuestions}&maxMarks=${maxMarks}&unitTestNo=${unitTestNo}}`, {
+      // const response = await fetch(`${BASE_URL}/api/TimeTableApi/generatequenstion?courseId=${language}&standardId=${standard}&numQuestions=${numQuestions}&maxMarks=${maxMarks}&unitTestNo=${unitTestNo}}`, {
       //   method: 'GET',
       // });
       if (standard === "") {
@@ -157,7 +158,7 @@ const ManualQuestionScreen = ({ route }) => {
       }
       const selectedChaptersString = selectedChapters.join(", ");
       const response = await axios.get(
-        "http://192.168.109.122:5000/api/QuestionApi/getmanualquestions",
+        "${BASE_URL}/api/QuestionApi/getmanualquestions",
         {
           params: {
             courseId: language,
@@ -608,7 +609,7 @@ const ManualQuestionScreen = ({ route }) => {
     }
 
     try {
-      const response = await axios.get(`http://192.168.109.122:5000/api/QuestionApi/getunitbyid?unitTestId=${itemValue}`);
+      const response = await axios.get(`${BASE_URL}/api/QuestionApi/getunitbyid?unitTestId=${itemValue}`);
       const data = response.data;
       console.log(data);  
       setMaxMarks(data.maxMarks ? data.maxMarks.toString() : ""); 

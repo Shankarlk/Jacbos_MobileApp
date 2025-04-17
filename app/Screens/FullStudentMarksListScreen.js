@@ -6,6 +6,7 @@ import {
 import * as FileSystem from 'expo-file-system';
 import * as Sharing from 'expo-sharing';
 import DateTimePicker from "@react-native-community/datetimepicker";
+import BASE_URL from "./apiConfig";
 
 export default function FullStudentMarksListScreen({ route }) {
     const { unitTestId, unitTestName,username } = route.params; 
@@ -17,6 +18,9 @@ export default function FullStudentMarksListScreen({ route }) {
     const [toDate, setToDate] = useState(null);
     const [showFromDatePicker, setShowFromDatePicker] = useState(false);
     const [showToDatePicker, setShowToDatePicker] = useState(false);
+    const [isClassTeacher, setIsClassTeacher] = useState(false);
+    const [allowedCourses, setAllowedCourses] = useState([]);
+
 
     useEffect(() => {
         fetchAttendanceData();
@@ -29,21 +33,24 @@ export default function FullStudentMarksListScreen({ route }) {
     const fetchAttendanceData = async () => {
         try {
             const response = await fetch(
-                `http://192.168.109.122:5000/api/TimeTableApi/getallstudentmarks?unitestId=${unitTestId}`
+                `${BASE_URL}/api/TimeTableApi/getallstudentmarks?unitestId=${unitTestId}&userId=${username}`
             );
             const data = await response.json();
-            console.log("Attendance Data: ", data);
+            console.log("Data: ", data);
 
-            if (Array.isArray(data)) {
-                const sortedData = data.sort((a, b) => 
-                    new Date(b.attendanceDate) - new Date(a.attendanceDate)
+            if (Array.isArray(data.students)) {
+                const sortedData = data.students.sort((a, b) =>
+                    (a.studentName || "").localeCompare(b.studentName || "")
                 );
                 setAttendanceData(sortedData);
                 setFilteredData(sortedData);
+                setIsClassTeacher(data.isClassTeacher);
+                setAllowedCourses(data.allowedCourses || []); // optional: if you include this in API
             } else {
                 setAttendanceData([]);
                 setFilteredData([]);
             }
+
         } catch (error) {
             console.error("Error fetching attendance data:", error);
         } finally {
@@ -59,13 +66,15 @@ export default function FullStudentMarksListScreen({ route }) {
             year: "numeric",
         });
     };
-
+    const canShow = (subject) => {
+        return isClassTeacher || allowedCourses.includes(subject);
+    }
     const downloadExcel = async () => {
         try {
         //   const standardId = 1; // Replace this with actual selected ID
           const search = searchText || ""; // searchText from your state
       
-          const url = `http://192.168.109.122:5000/api/TimeTableApi/downloadstudentmarks?standardId=${unitTestId}&search=${encodeURIComponent(search)}`;
+          const url = `${BASE_URL}/api/TimeTableApi/downloadstudentmarks?standardId=${unitTestId}&search=${encodeURIComponent(search)}&userId=${username}`;
       
           const fileUri = FileSystem.documentDirectory + "StudentMarks.xlsx";
       
@@ -137,17 +146,23 @@ export default function FullStudentMarksListScreen({ route }) {
                     renderItem={({ item }) => (
                         <View style={styles.questionCard}>
                             <Text style={styles.studentName}>Student Name: {item.studentName}</Text>
-                            <Text style={styles.questionText}>English: {item.english}</Text>
-                            <Text style={styles.questionText}>Hindi: {item.hindi}</Text>
-                            <Text style={styles.questionText}>Kannada: {item.kannada}</Text>
-                            <Text style={styles.questionText}>Maths: {item.maths}</Text>
-                            <Text style={styles.questionText}>Science: {item.science}</Text>
-                            <Text style={styles.questionText}>Social Science: {item.socialScience}</Text>
-                            <Text style={styles.questionText}>Total Obtained Marks: {parseInt(item.obtainedMarks)}</Text>
-                            <Text style={styles.questionText}>Total Max Marks: {parseInt(item.totalMarks)}</Text>
+                            {canShow("English") && <Text style={styles.questionText}>English: {item.english}</Text>}
+                            {canShow("Hindi") && <Text style={styles.questionText}>Hindi: {item.hindi}</Text>}
+                            {canShow("Kannada") && <Text style={styles.questionText}>Kannada: {item.kannada}</Text>}
+                            {canShow("Maths") && <Text style={styles.questionText}>Maths: {item.maths}</Text>}
+                            {canShow("Science") && <Text style={styles.questionText}>Science: {item.science}</Text>}
+                            {canShow("SocialScience") && <Text style={styles.questionText}>Social Science: {item.socialScience}</Text>}
+                    
+                            {isClassTeacher && (
+                                <>
+                                    <Text style={styles.questionText}>Total Obtained Marks: {parseInt(item.obtainedMarks)}</Text>
+                                    <Text style={styles.questionText}>Total Max Marks: {parseInt(item.totalMarks)}</Text>
+                                </>
+                            )}
                         </View>
                     )}
-                />
+                    
+                    />
                 
 
                 )}

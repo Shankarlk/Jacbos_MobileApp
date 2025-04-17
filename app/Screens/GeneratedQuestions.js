@@ -5,6 +5,7 @@ import * as Print from 'expo-print';
 import * as Sharing from 'expo-sharing';
 import { shareAsync } from 'expo-sharing';
 import * as FileSystem from 'expo-file-system';
+import BASE_URL from "./apiConfig";
 
 const GeneratedQuestions = ({ route }) => {
     const navigation = useNavigation();

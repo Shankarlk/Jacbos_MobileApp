@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, FlatList, StyleSheet, ActivityIndicator,TouchableOpacity } from 'react-native';
+import BASE_URL from "./apiConfig";
 
 const TestResultScreen = ({ route,navigation }) => {
   const [testResults, setTestResults] = useState([]);
@@ -21,7 +22,7 @@ const TestResultScreen = ({ route,navigation }) => {
 
   const fetchTestResults = async () => {
     try {
-      const response = await fetch(`http://192.168.109.122:5000/api/StudentApi/gettestresult?userId=${username}`);
+      const response = await fetch(`${BASE_URL}/api/StudentApi/gettestresult?userId=${username}`);
       const data = await response.json();
 
 let seen = new Set();

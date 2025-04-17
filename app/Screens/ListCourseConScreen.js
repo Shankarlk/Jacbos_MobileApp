@@ -3,6 +3,7 @@ import {
   View, Text, FlatList, ScrollView, StyleSheet, 
   ActivityIndicator, TouchableOpacity 
 } from "react-native";
+import BASE_URL from "./apiConfig";
 
 function ListCourseConScreen({ route, navigation }) {
   const { CourseId } = route.params;
@@ -16,7 +17,7 @@ function ListCourseConScreen({ route, navigation }) {
 
   const fetchEventDetails = async () => {
     try {       
-      const eventResponse = await fetch(`http://192.168.109.122:5000/api/TimeTableApi/getcoursematerial?Id=${CourseId}`);
+      const eventResponse = await fetch(`${BASE_URL}/api/TimeTableApi/getcoursematerial?Id=${CourseId}`);
       const eventData = await eventResponse.json();
       
       console.log(eventData);

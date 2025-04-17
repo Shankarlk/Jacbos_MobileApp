@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, FlatList, Switch, Button, Alert, StyleSheet, TextInput,TouchableOpacity } from 'react-native';
 import axios from 'axios';
 import { Modal } from 'react-native';
+import BASE_URL from "./apiConfig";
 
 function StListOfStudentsScreen ({ route,navigation }) {
     console.log("StListOfStudentsScreen");
@@ -28,7 +29,7 @@ function StListOfStudentsScreen ({ route,navigation }) {
                 const student = filteredStudents[i];
                 const studentId = student.id;
     
-                const response = await fetch(`http://192.168.109.122:5000/api/TimeTableApi/sendwatextparent?id=${studentId}&message=${encodeURIComponent(groupMessage)}`);
+                const response = await fetch(`${BASE_URL}/api/TimeTableApi/sendwatextparent?id=${studentId}&message=${encodeURIComponent(groupMessage)}`);
                 const result = await response.json();
                 console.log(result);
                 if (result.Message) {
@@ -50,7 +51,7 @@ function StListOfStudentsScreen ({ route,navigation }) {
     
     const fetchStudents = async () => {
         try {
-            const response = await axios.get(`http://192.168.109.122:5000/api/StudentApi/getallStudents?standardId=${standardId}`);
+            const response = await axios.get(`${BASE_URL}/api/StudentApi/getallStudents?standardId=${standardId}`);
             const studentList = response.data;
             
             setStudents(studentList);

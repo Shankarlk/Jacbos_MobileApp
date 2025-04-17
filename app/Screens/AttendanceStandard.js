@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { View, Text, FlatList, ScrollView, StyleSheet, ActivityIndicator,TouchableOpacity } from "react-native";
+import BASE_URL from "./apiConfig";
 
 function AttendanceStandard({ navigation,route }) {
     const [standard, SetStandard] = useState([]);
@@ -12,7 +13,7 @@ function AttendanceStandard({ navigation,route }) {
 
      const fetchEventDetails = async () => {
         try {      
-          const eventResponse = await fetch(`http://192.168.109.122:5000/api/TimeTableApi/getallteacherstandard?userId=${username}`);
+          const eventResponse = await fetch(`${BASE_URL}/api/TimeTableApi/getallteacherstandard?userId=${username}`);
           const eventData = await eventResponse.json();
           console.log(eventData);
           const filteredData = eventData.filter(item => item.isClassTeacher === true);

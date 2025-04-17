@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, FlatList, Switch, Button, Alert, StyleSheet, TextInput } from 'react-native';
 import axios from 'axios';
+import BASE_URL from "./apiConfig";
 
 function ListOfStudentsScreen ({ route }) {   
     const { standardId } = route.params || {};
@@ -19,7 +20,7 @@ function ListOfStudentsScreen ({ route }) {
 
     // const fetchStudents = async () => {
     //     try {
-    //         const response = await axios.get(`http://192.168.109.122:5000/api/StudentApi/getallStudents?standardId=${standardId}`);
+    //         const response = await axios.get(`${BASE_URL}/api/StudentApi/getallStudents?standardId=${standardId}`);
     //         const studentList = response.data;
             
     //         setStudents(studentList);
@@ -41,11 +42,11 @@ function ListOfStudentsScreen ({ route }) {
 
     const fetchStudents = async () => {
         try {
-            const response = await axios.get(`http://192.168.109.122:5000/api/StudentApi/getallStudents?standardId=${standardId}`);
+            const response = await axios.get(`${BASE_URL}/api/StudentApi/getallStudents?standardId=${standardId}`);
             const studentList = response.data;
     
             // Fetch leave data for students
-            const leaveResponse = await axios.get(`http://192.168.109.122:5000/api/StudentApi/getstudentleave?standardId=${standardId}`);
+            const leaveResponse = await axios.get(`${BASE_URL}/api/StudentApi/getstudentleave?standardId=${standardId}`);
             const studentLeaves = leaveResponse.data;
     
             const today = new Date().toISOString().split('T')[0]; // Get today's date in YYYY-MM-DD format
@@ -94,7 +95,7 @@ function ListOfStudentsScreen ({ route }) {
         }));
     
         try {
-            await axios.post('http://192.168.109.122:5000/api/TimeTableApi/updateattendance', attendanceData, {
+            await axios.post(`${BASE_URL}/api/TimeTableApi/updateattendance`, attendanceData, {
                 headers: { 'Content-Type': 'application/json' }
             });
             console.log(attendanceData);

@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, FlatList, StyleSheet, ScrollView, ActivityIndicator } from 'react-native';
+import BASE_URL from "./apiConfig";
 
 const HolidayEventListScreen = () => {
   const [holidays, setHolidays] = useState([]);
@@ -20,7 +21,7 @@ const HolidayEventListScreen = () => {
 
   const fetchData = async () => {
     try {
-        const response = await fetch('http://192.168.109.122:5000/api/PublicHolidayApi/getpublicholidays'); 
+        const response = await fetch(`${BASE_URL}/api/PublicHolidayApi/getpublicholidays`); 
       const data = await response.json();
         console.log(data);
       const holidayList = data.filter(item => !item.isEvent)

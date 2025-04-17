@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { View, Text, TextInput, TouchableOpacity, Alert, StyleSheet, Image } from "react-native";
 import axios from "axios";
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import BASE_URL from "./apiConfig";
 
 const LoginScreen = ({ navigation }) => {
   const [uname, setUsername] = useState('');
@@ -25,8 +26,8 @@ const LoginScreen = ({ navigation }) => {
     }
   
     try {
-      const API_BASE_URL = "http://192.168.109.122:5000";
-      const response = await axios.post(`${API_BASE_URL}/api/login`, {
+      // const BASE_URL = "${BASE_URL}";
+      const response = await axios.post(`${BASE_URL}/api/login`, {
         "Username": uname,
         "password": pwd,
         "EmailAddress": uname
@@ -48,7 +49,7 @@ const LoginScreen = ({ navigation }) => {
       setToken(authToken);
   
       await AsyncStorage.setItem("authToken", authToken);
-      const timetableResponse = await axios.get(`${API_BASE_URL}/api/TimeTableApi/gettimetable`, {
+      const timetableResponse = await axios.get(`${BASE_URL}/api/TimeTableApi/gettimetable`, {
         params: { userId: userId },
       });
 

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { View, Text, FlatList, TouchableOpacity, StyleSheet } from "react-native";
 import { useNavigation } from "@react-navigation/native";
+import BASE_URL from "./apiConfig";
 
 const UpdateStudentMarks = ({ route }) => {
   const { username, loggeduser } = route.params || { username: "Guest", loggeduser: "Unknown" };
@@ -10,7 +11,7 @@ const UpdateStudentMarks = ({ route }) => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch('http://192.168.109.122:5000/api/UpdateStudentMarksApi/getunittest');
+        const response = await fetch(`${BASE_URL}/api/UpdateStudentMarksApi/getunittest`);
         
         if (!response.ok) {
           throw new Error(`HTTP Error! Status: ${response.status}`);

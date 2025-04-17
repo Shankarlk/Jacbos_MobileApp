@@ -3,6 +3,7 @@ import { View, Text,Button, Alert, StyleSheet } from 'react-native';
 import * as FileSystem from 'expo-file-system';
 import { Linking } from 'react-native';
 import { Video } from 'expo-av';
+import BASE_URL from "./apiConfig";
 
 const FileDownloader = ({ route }) => {
   const { fileName, fileId } = route.params; 
@@ -13,7 +14,7 @@ const FileDownloader = ({ route }) => {
 
   useEffect(() => {
     const downloadFile = async () => {
-      const url = `http://192.168.38.122:5000/api/TimeTableApi/downloadthefile?fileName=${fileId}`; 
+      const url = `${BASE_URL}/api/TimeTableApi/downloadthefile?fileName=${fileId}`; 
 
       try {
         const response = await FileSystem.downloadAsync(url, fileUri);
