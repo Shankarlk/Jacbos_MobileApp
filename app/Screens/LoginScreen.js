@@ -77,13 +77,11 @@ const LoginScreen = ({ navigation }) => {
       console.error("Login Failed:", error);
   
       if (error.response) {
-        if (error.response.status === 401) {
-          Alert.alert("Login Failed", "Invalid username or password! Please try again.");
-        } else {
-          Alert.alert("Login Failed", `Server Error: ${error.response.status}`);
-        }
+        Alert.alert("Login Failed", "Invalid username or password! Please try again.");
+      } else if (error.request) {
+        Alert.alert("Login Failed", "No response from server. Possible network issue.");
       } else {
-        Alert.alert("Login Failed", "Network Error! Please check your internet connection.");
+        Alert.alert("Login Failed", `Unexpected server error: ${error.message}`);
       }
     }
   };
@@ -108,10 +106,10 @@ const LoginScreen = ({ navigation }) => {
         <Text style={styles.buttonText}>LOGIN</Text>
       </TouchableOpacity>
       <View style={styles.footerLinks}>
-        <TouchableOpacity>
+        {/* <TouchableOpacity>
           <Text style={styles.link}>Don’t have an account?</Text>
-        </TouchableOpacity>
-        <TouchableOpacity>
+        </TouchableOpacity> */}
+        <TouchableOpacity onPress={() => navigation.navigate('ForgotPasswordScreen')}>
           <Text style={styles.link}>Forgot Password?</Text>
         </TouchableOpacity>
       </View>
@@ -126,12 +124,12 @@ const LoginScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: { flex: 1, justifyContent: 'center', alignItems: 'center', padding: 20, backgroundColor: '#fff' },
   logo: { width: 200, height: 100, marginBottom: 10 },
-  title: { fontSize: 22, fontWeight: 'bold', color: '#002366', marginBottom: 20 },
+  title: { fontSize: 22, fontWeight: 'bold', color: 'black', marginBottom: 20 },
   input: { width: '100%', height: 50, borderColor: 'gray', borderWidth: 1, borderRadius: 5, paddingHorizontal: 10, marginBottom: 15 },
   checkboxContainer: { flexDirection: 'row', justifyContent: 'space-between', width: '100%', marginBottom: 15 },
-  button: { width: '100%', height: 50, backgroundColor: '#002366', justifyContent: 'center', alignItems: 'center', borderRadius: 5 },
+  button: { width: '100%', height: 50, backgroundColor: 'black', justifyContent: 'center', alignItems: 'center', borderRadius: 5 },
   buttonText: { color: '#fff', fontSize: 16, fontWeight: 'bold' },
-  footerLinks: { flexDirection: 'row', justifyContent: 'space-between', width: '100%', marginTop: 15 },
+  footerLinks: { flexDirection: 'row', justifyContent: 'space-between', width: '100%', marginTop: 15, marginLeft:400},
   link: { color: '#002366', textDecorationLine: 'underline' },
   footer: { position: 'absolute', bottom: 20, alignItems: 'center' },
   footerText: { fontSize: 15, color: 'gray' },

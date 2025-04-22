@@ -1,5 +1,5 @@
 import React, { useEffect,useState } from "react";
-import { View, Text, TextInput,Button, Modal, TouchableOpacity, StyleSheet,FlatList,Alert } from "react-native";
+import { View, Text, TextInput,Button, Modal, TouchableOpacity, StyleSheet,FlatList,Alert,Platform, KeyboardAvoidingView, ScrollView } from "react-native";
 import { Picker } from "@react-native-picker/picker";
 import axios from 'axios';
 import * as Print from 'expo-print';
@@ -628,6 +628,10 @@ const ManualQuestionScreen = ({ route }) => {
         <Text style={styles.buttonText}>Generate Questions</Text>
       </TouchableOpacity> */}
 
+      <ScrollView 
+        contentContainerStyle={styles.scrollContent}
+        showsVerticalScrollIndicator={false}
+      >
       <View style={styles.modalContainer}>
         <View style={styles.modalContent}>
           {/* <Text style={styles.title}>Generate Questions</Text> */}
@@ -752,6 +756,7 @@ const ManualQuestionScreen = ({ route }) => {
           </TouchableOpacity>
         </View>
       </View>
+      </ScrollView>
       <Modal visible={listModalVisible} animationType="slide">
         <View style={styles.modalContainer}>
           <View style={styles.modalContent}>
@@ -854,14 +859,14 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    width: "90%",
+    width: "100%",
     // backgroundColor: "rgba(0,0,0,0.5)",
   },
   modalContent: {
     backgroundColor: "#fff",
     padding: 20,
     borderRadius: 10,
-    width: "90%",
+    width: "100%",
   },
   title: {
     fontSize: 18,

@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { 
     View, Text, FlatList, ActivityIndicator, StyleSheet, 
-    TextInput, TouchableOpacity 
+    TextInput, TouchableOpacity ,ScrollView
 } from "react-native";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import BASE_URL from "./apiConfig";
+import NoInternetBanner from "./NoInternetBanner"; 
 
 export default function OverallStudentAttendance({ route }) {
     const { username } = route.params || { username: "Guest" };
@@ -82,116 +83,125 @@ export default function OverallStudentAttendance({ route }) {
 
     return (
         <View style={styles.container}>
-            <TextInput
-                style={styles.input}
-                placeholder="Search by Student Name"
-                value={searchText}
-                onChangeText={setSearchText}
+      <NoInternetBanner />
+            <FlatList
+  ListHeaderComponent={
+    <>
+      <TextInput
+        style={styles.input}
+        placeholder="Search by Student Name"
+        value={searchText}
+        onChangeText={setSearchText}
+      />
+
+      <View style={styles.dateFilterContainer}>
+        {/* From Date */}
+        <View>
+          <Text style={styles.label}>From Date</Text>
+          <TouchableOpacity onPress={() => setShowFromDatePicker(true)} style={styles.dateInput}>
+            <Text>{formatDate(fromDate)}</Text>
+          </TouchableOpacity>
+          {showFromDatePicker && (
+            <DateTimePicker
+              value={fromDate || new Date()}
+              mode="date"
+              display="default"
+              onChange={(event, selectedDate) => {
+                setShowFromDatePicker(false);
+                if (selectedDate) {
+                  if (toDate && selectedDate > toDate) {
+                    alert("From Date cannot be greater than To Date");
+                  } else {
+                    setFromDate(selectedDate);
+                  }
+                }
+              }}
             />
+          )}
+        </View>
 
-            {/* Date Filters */}
-            <View style={styles.dateFilterContainer}>
-                {/* From Date */}
-                <View>
-                    <Text style={styles.label}>From Date</Text>
-                    <TouchableOpacity onPress={() => setShowFromDatePicker(true)} style={styles.dateInput}>
-                        <Text>{formatDate(fromDate)}</Text>
-                    </TouchableOpacity>
-                    {showFromDatePicker && (
-                        <DateTimePicker
-                            value={fromDate || new Date()}
-                            mode="date"
-                            display="default"
-                            onChange={(event, selectedDate) => {
-                                setShowFromDatePicker(false);
-                                if (selectedDate) {
-                                    if (toDate && selectedDate > toDate) {
-                                        alert("From Date cannot be greater than To Date");
-                                    } else {
-                                        setFromDate(selectedDate);
-                                    }
-                                }
-                            }}
-                        />
-                    )}
-                </View>
+        {/* To Date */}
+        <View>
+          <Text style={styles.label}>To Date</Text>
+          <TouchableOpacity onPress={() => setShowToDatePicker(true)} style={styles.dateInput}>
+            <Text>{formatDate(toDate)}</Text>
+          </TouchableOpacity>
+          {showToDatePicker && (
+            <DateTimePicker
+              value={toDate || new Date()}
+              mode="date"
+              display="default"
+              onChange={(event, selectedDate) => {
+                setShowToDatePicker(false);
+                if (selectedDate) {
+                  if (fromDate && selectedDate < fromDate) {
+                    alert("To Date cannot be earlier than From Date");
+                  } else {
+                    setToDate(selectedDate);
+                  }
+                }
+              }}
+            />
+          )}
+        </View>
 
-                {/* To Date */}
-                <View>
-                    <Text style={styles.label}>To Date</Text>
-                    <TouchableOpacity onPress={() => setShowToDatePicker(true)} style={styles.dateInput}>
-                        <Text>{formatDate(toDate)}</Text>
-                    </TouchableOpacity>
-                    {showToDatePicker && (
-                        <DateTimePicker
-                            value={toDate || new Date()}
-                            mode="date"
-                            display="default"
-                            onChange={(event, selectedDate) => {
-                                setShowToDatePicker(false);
-                                if (selectedDate) {
-                                    if (fromDate && selectedDate < fromDate) {
-                                        alert("To Date cannot be earlier than From Date");
-                                    } else {
-                                        setToDate(selectedDate);
-                                    }
-                                }
-                            }}
-                        />
-                    )}
-                </View>
+        {/* Clear Button */}
+        <TouchableOpacity 
+          style={styles.clearButton} 
+          onPress={() => {
+            setFromDate(null);
+            setToDate(null);
+            setSearchText("");
+            setFilteredData(attendanceData);
+          }}
+        >
+          <Text style={styles.clearButtonText}>Clear</Text>
+        </TouchableOpacity>
+      </View>
 
-                {/* Clear Filters Button */}
-                <TouchableOpacity 
-                    style={styles.clearButton} 
-                    onPress={() => {
-                        setFromDate(null);
-                        setToDate(null);
-                        setSearchText("");
-                        setFilteredData(attendanceData);
-                    }}
-                >
-                    <Text style={styles.clearButtonText}>Clear</Text>
-                </TouchableOpacity>
-            </View>
+      {/* Header Row */}
+      <View style={[styles.row, styles.headerRow]}>
+        <Text style={styles.headerCell}>Student Name</Text>
+        <Text style={styles.headerCell}>Standard</Text>
+        <Text style={styles.headerCell}>Date</Text>
+        <Text style={styles.headerCell}>Status</Text>
+      </View>
+    </>
+  }
 
-            {/* Table Data */}
-            <View style={styles.table}>
-                <View style={[styles.row, styles.headerRow]}>
-                    <Text style={styles.headerCell}>Student Name</Text>
-                    <Text style={styles.headerCell}>Standard</Text>
-                    <Text style={styles.headerCell}>Date</Text>
-                    <Text style={styles.headerCell}>Status</Text>
-                </View>
+  data={filteredData}
+  keyExtractor={(item, index) => index.toString()}
+  renderItem={({ item }) => (
+    <View style={styles.row}>
+      <Text style={styles.cell}>{item.studentName}</Text>
+      <Text style={styles.cell}>{item.standardName}</Text>
+      <Text style={styles.cell}>{formatDate(item.attendanceDate)}</Text>
+      <Text style={styles.cell}>{item.isPresent ? "Present" : "Absent"}</Text>
+    </View>
+  )}
+  ListEmptyComponent={
+    loading ? (
+      <ActivityIndicator size="large" color="#0000ff" />
+    ) : (
+      <Text style={styles.noData}>No attendance records found</Text>
+    )
+  }
+  contentContainerStyle={styles.scrollViewContent}
+/>
 
-                {loading ? (
-                    <ActivityIndicator size="large" color="#0000ff" />
-                ) : filteredData.length === 0 ? (
-                    <Text style={styles.noData}>No attendance records found</Text>
-                ) : (
-                    <FlatList
-                        data={filteredData}
-                        keyExtractor={(item, index) => index.toString()}
-                        renderItem={({ item }) => (
-                            <View style={styles.row}>
-                                <Text style={styles.cell}>{item.studentName}</Text>
-                                <Text style={styles.cell}>{item.standardName}</Text>
-                                <Text style={styles.cell}>{formatDate(item.attendanceDate)}</Text>
-                                <Text style={styles.cell}>{item.isPresent ? "Present" : "Absent"}</Text>
-                            </View>
-                        )}
-                    />
-                )}
-            </View>
         </View>
     );
+    
 }
 
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        padding: 10,
         backgroundColor: "#f5f5f5",
+    },
+    scrollViewContent: {
+        padding: 10,
+        paddingBottom: 10, // Ensure there's padding at the bottom for the button to be visible
     },
     input: {
         height: 40,
@@ -219,7 +229,7 @@ const styles = StyleSheet.create({
         justifyContent: "center",
         alignItems: "center",
         paddingHorizontal: 10,
-        width: 150,
+        width: 120,
         backgroundColor: "white",
     },
     table: {
@@ -261,7 +271,7 @@ const styles = StyleSheet.create({
     clearButton: {
         backgroundColor: "black",
         paddingVertical: 10,
-        paddingHorizontal: 15,
+        paddingHorizontal: 10,
         borderRadius: 5,
         justifyContent: "center",
         alignItems: "center",

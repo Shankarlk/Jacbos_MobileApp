@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react"; 
-import { View, Text, FlatList, TextInput, StyleSheet } from "react-native";
+import { View, Text, FlatList, TextInput, StyleSheet,ActivityIndicator } from "react-native";
 import { Button } from "react-native-paper";
 import DropDownPicker from "react-native-dropdown-picker";
 import RNPickerSelect from "react-native-dropdown-picker";
@@ -8,16 +8,34 @@ import Toast from "react-native-toast-message";
 import BASE_URL from "./apiConfig";
 
 const UpdateStudentScoresScreen = ({ route }) => {
+  const [loading, setLoading] = useState(true);
+
   const navigation = useNavigation();
   const { unitTestId, unitTestName,username } = route.params; 
   const [dispalyStudents, setDisplayStudents] = useState([]);
   const [courses, setCourses] = useState([]); 
   const [openDropdown, setOpenDropdown] = useState(null);
+  const [searchQuery, setSearchQuery] = useState("");
 
+  const filteredStudents = dispalyStudents.filter(student =>
+    student.studentName.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+  
   useEffect(() => {
-    fetchStudents();
-    fetchCourses();
+    const loadData = async () => {
+      try {
+        setLoading(true);
+        await Promise.all([fetchStudents(), fetchCourses()]);
+      } catch (error) {
+        console.error("Error loading data:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+  
+    loadData();
   }, []);
+  
 
   const fetchStudents = async () => {
     try {
@@ -100,28 +118,27 @@ const UpdateStudentScoresScreen = ({ route }) => {
     }
   };
 
-  const renderItem = ({ item }) => (
-    <View style={styles.row}>
+  const renderItem = ({ item, index }) => (
+    <View style={[styles.row, { zIndex: dispalyStudents.length - index }]}>
       <Text style={styles.cell}>{item.studentName}</Text>
       <Text style={styles.cell}>{item.unitTestName}</Text>
   
-      {/* Course Dropdown for each student */}
       <View style={styles.dropdown}>
         <DropDownPicker
           open={openDropdown === item.id}
-          value={item.selectedCourse} // Make sure value persists
+          value={item.selectedCourse}
           items={courses}
           setOpen={() => setOpenDropdown(openDropdown === item.id ? null : item.id)}
           setValue={(callback) => {
-            const newValue = callback(item.selectedCourse); // Get selected value
-            updateStudentData(item.id, "selectedCourse", newValue); // Update state
+            const newValue = callback(item.selectedCourse);
+            updateStudentData(item.id, "selectedCourse", newValue);
           }}
-          onChangeValue={(value) => {
-            console.log("Selected Course:", value);
-          }}
+          onChangeValue={(value) => console.log("Selected Course:", value)}
           placeholder="Select Course"
-          style={styles.dropdownPicker} 
+          style={styles.dropdownPicker}
           dropDownContainerStyle={styles.dropdownContainer}
+          zIndex={dispalyStudents.length - index}
+          zIndexInverse={index}
         />
       </View>
   
@@ -133,38 +150,64 @@ const UpdateStudentScoresScreen = ({ route }) => {
       />
     </View>
   );
+  if (loading) {
+    return (
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator size="large" color="#007AFF" />
+        <Text style={{ marginTop: 10 }}>Loading student data...</Text>
+      </View>
+    );
+  }
   
-  
-  
-
   return (
     <View style={styles.container}>
-      <View style={styles.header}>
-        <Text style={styles.headerText}>Update Student Scores</Text>
-      </View>
-
-      <View style={styles.tableHeader}>
-        <Text style={styles.headerCell}>Student Name</Text>
-        <Text style={styles.headerCell}>Unit Test</Text>
-        <Text style={styles.headerCell}>Subject</Text>
-        <Text style={styles.headerCell}>Marks</Text>
-      </View>
-
-      <FlatList data={dispalyStudents} renderItem={renderItem} keyExtractor={item => item.id.toString()} />
-
-      <View style={styles.buttonContainer}>
-        <Button mode="contained" onPress={() => navigation.goBack()} style={styles.button}>
-          Back
-        </Button>
-        <Button mode="contained" onPress={handleSaveChanges} style={styles.button}>
-          Save Changes
-        </Button>
-      </View>
+      <FlatList
+        ListHeaderComponent={
+          <>
+            {/* Search Bar */}
+            <TextInput
+              placeholder="Search by student name..."
+              style={styles.searchInput}
+              value={searchQuery}
+              onChangeText={setSearchQuery}
+            />
+  
+            {/* Table Header */}
+            <View style={styles.tableHeader}>
+              <Text style={styles.headerCell}>Student Name</Text>
+              <Text style={styles.headerCell}>Unit Test</Text>
+              <Text style={styles.headerCell}>Subject</Text>
+              <Text style={styles.headerCell}>Marks</Text>
+            </View>
+          </>
+        }
+        data={filteredStudents}
+        renderItem={renderItem}
+        keyExtractor={item => item.id.toString()}
+        ListFooterComponent={
+          <View style={styles.buttonContainer}>
+            <Button mode="contained" onPress={() => navigation.goBack()} style={styles.button}>
+              Back
+            </Button>
+            <Button mode="contained" onPress={handleSaveChanges} style={styles.button}>
+              Save Changes
+            </Button>
+          </View>
+        }
+      />
     </View>
   );
+  
 };
 
 const styles = StyleSheet.create({
+  loadingContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "#fff",
+  },
+  
   container: { flex: 1, padding: 10,marginTop:20, backgroundColor: "#fff" },
   header: { flexDirection: "row", alignItems: "center", paddingBottom: 10, borderBottomWidth: 1, borderBottomColor: "#ccc" },
   headerText: { fontSize: 18, fontWeight: "bold", marginLeft: 10 },
@@ -201,7 +244,15 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     textAlign: "center",
     backgroundColor: "#fff",
-  },
+  },searchInput: {
+    height: 40,
+    borderColor: "#ccc",
+    borderWidth: 1,
+    borderRadius: 5,
+    marginBottom: 10,
+    paddingHorizontal: 10,
+    backgroundColor: "#fff",
+  },  
 });
 
 

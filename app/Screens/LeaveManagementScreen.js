@@ -3,6 +3,7 @@ import { View, TextInput, Button, Alert, Linking, StyleSheet,Text,TouchableOpaci
 import DateTimePicker from '@react-native-community/datetimepicker';
 import DropDownPicker from "react-native-dropdown-picker";
 import BASE_URL from "./apiConfig";
+import NoInternetBanner from "./NoInternetBanner"; 
 
 const LeaveManagementScreen = ({route}) => {
   const { username, loggeduser,isClassteacher } = route.params || { username: "Guest", loggeduser: "Unknown" };
@@ -145,6 +146,7 @@ const LeaveManagementScreen = ({route}) => {
     return (
             <View style={styles.container}>
               <View style={styles.modalContainer}>
+              <NoInternetBanner />
                 <View style={styles.modalContent}>
             {/* <Text style={styles.row}>Enter The Leave Reason</Text>
             <TextInput

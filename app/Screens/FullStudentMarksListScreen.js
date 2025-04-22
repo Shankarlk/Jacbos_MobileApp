@@ -175,6 +175,7 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         padding: 10,
+        marginBottom:50,
         backgroundColor: "#f5f5f5",
     },
     searchRow: {

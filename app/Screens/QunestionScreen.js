@@ -1,5 +1,5 @@
 import React, { useEffect,useState } from "react";
-import { View, Text, TextInput,Button, Modal, TouchableOpacity, StyleSheet,FlatList,Alert } from "react-native";
+import { View, Text, TextInput,Button, Modal, TouchableOpacity, StyleSheet,ScrollView,FlatList,Alert } from "react-native";
 import { Picker } from "@react-native-picker/picker";
 import DropDownPicker from "react-native-dropdown-picker";
 import axios from 'axios';
@@ -169,22 +169,27 @@ const QunestionScreen = ({route}) => {
 
   return (
     <View style={styles.container}>
+      <ScrollView 
+        contentContainerStyle={styles.scrollContent}
+        showsVerticalScrollIndicator={false}
+      >
         <View style={styles.modalContainer}>
           <View style={styles.modalContent}>
-            {/* <Text style={styles.title}>Generate Questions</Text> */}
             <Text style={styles.label}>Standard</Text>
             <Picker
               selectedValue={standard}
-              onValueChange={(itemValue) => {setStandard(itemValue)
+              onValueChange={(itemValue) => {
+                setStandard(itemValue);
                 const selectedItem = standardsData.find((item) => item.value === itemValue);
-                setStandardSelectedLabel(selectedItem ? selectedItem.text : '');}}
+                setStandardSelectedLabel(selectedItem ? selectedItem.text : '');
+              }}
               style={styles.picker}
             >
               {standardsData.map((item, index) => (
                 <Picker.Item key={index} label={item.text} value={item.value} />
               ))}
             </Picker>
-
+  
             <Text style={styles.label}>Subject</Text>
             <Picker
               selectedValue={language}
@@ -195,19 +200,19 @@ const QunestionScreen = ({route}) => {
                 <Picker.Item key={index} label={item.text} value={item.value} />
               ))}
             </Picker>
-
-          <Text style={styles.label}>Chapter Name</Text>
-          
-          <DropDownPicker
-            multiple={true}
-            open={open}
-            value={selectedChapters}
-            items={chaptersData}
-            setOpen={setOpen}
-            setValue={setSelectedChapters}
-            setItems={setChaptersData}
-          />
-
+  
+            <Text style={styles.label}>Chapter Name</Text>
+            <DropDownPicker
+              multiple={true}
+              open={open}
+              value={selectedChapters}
+              items={chaptersData}
+              setOpen={setOpen}
+              setValue={setSelectedChapters}
+              setItems={setChaptersData}
+              containerStyle={{ marginBottom: open ? 200 : 15 }}
+            />
+  
             <Text style={styles.label}>Test Name</Text>
             <Picker
               selectedValue={unitTestNo}
@@ -218,26 +223,25 @@ const QunestionScreen = ({route}) => {
                 <Picker.Item key={index} label={item.text} value={item.value} />
               ))}
             </Picker>
+  
             <Text style={styles.label}>Max Marks</Text>
             <TextInput
               style={styles.input}
               placeholder="Max Marks"
               keyboardType="numeric"
-              value={maxMarks}   
+              value={maxMarks}
               editable={false}
-              onChangeText={setMaxMarks} 
             />
-
-<Text style={styles.label}>Test Date</Text>
+  
+            <Text style={styles.label}>Test Date</Text>
             <TextInput
               style={styles.input}
               placeholder="Test Date"
               keyboardType="default"
-              value={testDate}  
+              value={testDate}
               editable={false}
-              onChangeText={setTestDate} 
             />
-
+  
             <Text style={styles.label}>Total Hours</Text>
             <TextInput
               style={styles.input}
@@ -246,26 +250,27 @@ const QunestionScreen = ({route}) => {
               value={totalHours}
               onChangeText={setTotalHours}
             />
-
+  
             <TouchableOpacity
               style={styles.generateButton}
-              onPress={() => {
-                handleGenerateQuestions();
-              }}
+              onPress={handleGenerateQuestions}
             >
               <Text style={styles.buttonText}>Generate Questions</Text>
             </TouchableOpacity>
-
           </View>
         </View>
-
+      </ScrollView>
     </View>
   );
+  
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    marginTop:10,
+    marginBottom:10,
+    padding:15,
     justifyContent: "center",
     alignItems: "center",
     backgroundColor: "#f4f4f4",
@@ -274,6 +279,9 @@ const styles = StyleSheet.create({
     backgroundColor: "#000",
     padding: 15,
     borderRadius: 8,
+  },
+  scrollContent: {
+    paddingBottom: 50,
   },
   buttonText: {
     color: "#fff",
@@ -284,14 +292,13 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    width:"90%"
-    // backgroundColor: "rgba(0,0,0,0.5)",
+    width:"100%"
   },
   modalContent: {
     backgroundColor: "#fff",
-    padding: 20,
+    padding: 10,
     borderRadius: 10,
-    width: "90%",
+    width: "100%",
   },
   title: {
     fontSize: 18,

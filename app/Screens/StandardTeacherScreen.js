@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { View, Text, FlatList, ScrollView, StyleSheet, ActivityIndicator,TouchableOpacity } from "react-native";
 import BASE_URL from "./apiConfig";
+import NoInternetBanner from "./NoInternetBanner"; 
 
 function StandardTeacherScreen({ navigation,route }) {
     const [standard, SetStandard] = useState([]);
@@ -47,6 +48,7 @@ function StandardTeacherScreen({ navigation,route }) {
   return (
     <ScrollView style={styles.container}>
       {/* <Text style={styles.heading}>Standards</Text> */}
+      <NoInternetBanner />
       <FlatList
         data={standard}
         renderItem={renderItem}

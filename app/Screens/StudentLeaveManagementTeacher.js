@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { View, Text, FlatList, ActivityIndicator, TextInput, TouchableOpacity, StyleSheet } from "react-native";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import BASE_URL from "./apiConfig";
+import NoInternetBanner from "./NoInternetBanner"; 
 
 const StudentLeaveManagementTeacher = ({ route }) => {
     const { username } = route.params || { username: "Guest" };
@@ -97,6 +98,9 @@ const StudentLeaveManagementTeacher = ({ route }) => {
     return (
         <View style={styles.container}>
             {/* Search Input */}
+            <NoInternetBanner />
+            <View style={{padding:10}}>
+                
             <TextInput
                 style={styles.searchInput}
                 placeholder="Search by Student Name"
@@ -185,6 +189,7 @@ const StudentLeaveManagementTeacher = ({ route }) => {
                     />
                 )}
             </View>
+            </View>
         </View>
     );
 };
@@ -192,7 +197,7 @@ const StudentLeaveManagementTeacher = ({ route }) => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        padding: 10,
+        padding: 0,
         backgroundColor: "#f5f5f5",
     },
     searchInput: {

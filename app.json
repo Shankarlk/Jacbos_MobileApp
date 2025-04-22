@@ -24,7 +24,8 @@
         "foregroundImage": "./app/assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.rajugouda.SMSAPP"
+      "package": "com.rajugouda.SMSAPP",
+      "permissions": ["INTERNET"]
     },
     "web": {
       "favicon": "./app/assets/favicon.png"

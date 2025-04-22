@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, FlatList, TouchableOpacity, StyleSheet } from "react-native";
+import { View, Text, FlatList, TouchableOpacity, StyleSheet,ActivityIndicator } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import BASE_URL from "./apiConfig";
 
 const StudentMarksListScreen = ({ route }) => {
+  const [loading, setLoading] = useState(true);
+
   const { username, loggeduser } = route.params || { username: "Guest", loggeduser: "Unknown" };
     const navigation = useNavigation();
   const [unitData, setUnitData] = useState([]);
@@ -11,28 +13,24 @@ const StudentMarksListScreen = ({ route }) => {
   useEffect(() => {
     const fetchData = async () => {
       try {
+        setLoading(true); // Start loading
         const response = await fetch(`${BASE_URL}/api/TimeTableApi/getallteacherunittest?userId=${username}`);
-        
-        if (!response.ok) {
-          throw new Error(`HTTP Error! Status: ${response.status}`);
-        }
-
+        if (!response.ok) throw new Error(`HTTP Error! Status: ${response.status}`);
+     
         const data = await response.json();
-        console.log("Raw API Response:", data);
-
-        if (!Array.isArray(data)) {
-          throw new Error("API did not return an array!");
-        }
-
+        if (!Array.isArray(data)) throw new Error("API did not return an array!");
+  
         setUnitData(data);
-        console.log("Updated State:", data); // Ensuring state updates
       } catch (error) {
         console.error("Error fetching data:", error.message);
+      } finally {
+        setLoading(false); // Stop loading regardless of success/failure
       }
     };
-
+  
     fetchData();
   }, []);
+  
 
   const renderItem = ({ item , index}) => {
     console.log("Rendering Item:", item);
@@ -45,12 +43,20 @@ const StudentMarksListScreen = ({ route }) => {
       </TouchableOpacity>
     );
   };
-
+  if (loading) {
+    return (
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator size="large" color="#007AFF" />
+        <Text style={{ marginTop: 10 }}>Loading data...</Text>
+      </View>
+    );
+  }
+  
   return (
     <View style={styles.container}>
-      <View style={styles.header}>
+      {/* <View style={styles.header}>
         <Text style={styles.headerText}>Update Student Marks</Text>
-      </View>
+      </View> */}
 
       <View style={styles.tableHeader}>
         <Text style={styles.headerCell}>Unit Test</Text>
@@ -77,6 +83,13 @@ const styles = StyleSheet.create({
     padding: 10,
     backgroundColor: "#fff",
   },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "#fff",
+  },
+  
   header: {
     flexDirection: "row",
     alignItems: "center",

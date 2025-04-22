@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, FlatList, TouchableOpacity, StyleSheet } from "react-native";
+import { View, Text, FlatList, TouchableOpacity,ActivityIndicator, StyleSheet } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import BASE_URL from "./apiConfig";
 
 const UpdateStudentMarks = ({ route }) => {
+    const [loading, setLoading] = useState(true);
   const { username, loggeduser } = route.params || { username: "Guest", loggeduser: "Unknown" };
     const navigation = useNavigation();
   const [unitData, setUnitData] = useState([]);
@@ -11,28 +12,29 @@ const UpdateStudentMarks = ({ route }) => {
   useEffect(() => {
     const fetchData = async () => {
       try {
+        setLoading(true); // start loading
         const response = await fetch(`${BASE_URL}/api/UpdateStudentMarksApi/getunittest`);
-        
+  
         if (!response.ok) {
           throw new Error(`HTTP Error! Status: ${response.status}`);
         }
-
+  
         const data = await response.json();
-        console.log("Raw API Response:", data);
-
         if (!Array.isArray(data)) {
           throw new Error("API did not return an array!");
         }
-
+  
         setUnitData(data);
-        console.log("Updated State:", data); // Ensuring state updates
       } catch (error) {
         console.error("Error fetching data:", error.message);
+      } finally {
+        setLoading(false); // stop loading
       }
     };
-
+  
     fetchData();
   }, []);
+  
 
   const renderItem = ({ item , index}) => {
     console.log("Rendering Item:", item);
@@ -48,24 +50,30 @@ const UpdateStudentMarks = ({ route }) => {
 
   return (
     <View style={styles.container}>
-      <View style={styles.header}>
+      {/* <View style={styles.header}>
         <Text style={styles.headerText}>Update Student Marks</Text>
-      </View>
+      </View> */}
 
       <View style={styles.tableHeader}>
         <Text style={styles.headerCell}>Unit Test</Text>
         <Text style={styles.headerCell}>Standard Name</Text>
       </View>
 
-        {unitData.length === 0 ? (
-          <Text>No data available</Text>
-        ) : (
-          <FlatList 
-            data={unitData} 
-            renderItem={renderItem} 
-            keyExtractor={(item, index) => index.toString()}
-          />
-        )}
+      {loading ? (
+  <View style={styles.loadingContainer}>
+    <ActivityIndicator size="large" color="#007AFF" />
+    <Text style={{ marginTop: 10 }}>Loading unit tests...</Text>
+  </View>
+) : unitData.length === 0 ? (
+  <Text>No data available</Text>
+) : (
+  <FlatList 
+    data={unitData} 
+    renderItem={renderItem} 
+    keyExtractor={(item, index) => index.toString()}
+  />
+)}
+
     </View>
   );
 };

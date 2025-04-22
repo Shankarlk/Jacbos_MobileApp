@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, FlatList, Switch, Button, Alert, StyleSheet, TextInput,TouchableOpacity } from 'react-native';
+import { View, Text, FlatList, Switch, Button, Alert, StyleSheet, TextInput,ActivityIndicator,TouchableOpacity } from 'react-native';
 import axios from 'axios';
 import { Modal } from 'react-native';
 import BASE_URL from "./apiConfig";
+import NoInternetBanner from "./NoInternetBanner"; 
 
 function StListOfStudentsScreen ({ route,navigation }) {
-    console.log("StListOfStudentsScreen");
+    const [loading, setLoading] = useState(true);
     const { standardId } = route.params; // Assuming the standard/class ID is passed from the previous screen
     const [students, setStudents] = useState([]);
     const [attendance, setAttendance] = useState({});
@@ -51,25 +52,28 @@ function StListOfStudentsScreen ({ route,navigation }) {
     
     const fetchStudents = async () => {
         try {
+            setLoading(true); // Start loading
             const response = await axios.get(`${BASE_URL}/api/StudentApi/getallStudents?standardId=${standardId}`);
             const studentList = response.data;
-            
+    
             setStudents(studentList);
-
+    
             // By default, mark all students as "Present"
             const defaultAttendance = {};
             studentList.forEach(student => {
-                defaultAttendance[student.id] = true; // true = Present, false = Absent
+                defaultAttendance[student.id] = true;
             });
+    
             setAttendance(defaultAttendance);
             setFilteredStudents(studentList);
-
-            // Alert.alert("Error", "Failed to fetch students.");
         } catch (error) {
             Alert.alert("Error", "Failed to fetch students.");
             console.error(error);
+        } finally {
+            setLoading(false); // Stop loading
         }
     };
+    
     const handleSearch = (text) => {
         setSearchText(text);
         if (text === '') {
@@ -87,6 +91,7 @@ function StListOfStudentsScreen ({ route,navigation }) {
 
     return (
         <View style={styles.container}>
+      <NoInternetBanner />
             <Text style={styles.header}>Students List</Text>
             <TextInput
                 style={styles.searchInput}
@@ -94,17 +99,25 @@ function StListOfStudentsScreen ({ route,navigation }) {
                 value={searchText}
                 onChangeText={handleSearch}
             />
-            <FlatList
-                data={filteredStudents}
-                keyExtractor={(item) => item.id.toString()}
-                renderItem={({ item }) => (
-                    <View >
-                        <TouchableOpacity onPress={() => navigateToMessageScreen(item)} style={styles.row}>
-                            <Text style={styles.studentName}>{item.studentName}</Text>
-                        </TouchableOpacity>
-                    </View>
-                )}
-            />
+           {loading ? (
+    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', marginTop: 20 }}>
+        <Text style={{ marginBottom: 10 }}>Loading students...</Text>
+        <ActivityIndicator size="large" color="#007AFF" />
+    </View>
+) : (
+    <FlatList
+    data={filteredStudents}
+    keyExtractor={(item) => item.id.toString()}
+    renderItem={({ item }) => (
+        <View >
+            <TouchableOpacity onPress={() => navigateToMessageScreen(item)} style={styles.row}>
+                <Text style={styles.studentName}>{item.studentName}</Text>
+            </TouchableOpacity>
+        </View>
+    )}
+/>
+)}
+
             <Button
                 title="Send Message to All"
                 onPress={() => setModalVisible(true)}

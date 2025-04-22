@@ -6,6 +6,7 @@ import DashboardScreen from "./DashboardScreen";
 import SubjectStackNavigator from "./SubjectStackNavigator";
 import ManualQuestionScreen from "./ManualQuestionScreen";
 import UpdateStudentMarks from "./UpdateStudentMarksScreen";
+import StudentScoreStack from "./StudentScoreStack";
 import StudentMarksStack from "./StudentMarksStack";
 import StandardMessageStack from "./StandardMessageStack";
 import AttendanceStack from "./AttendanceStack";
@@ -124,7 +125,7 @@ function DrawerNavigator({ screenProps }) {
         />
         <Drawer.Screen
           name="Update Student Marks"
-          component={UpdateStudentMarks}
+          component={StudentScoreStack}
           initialParams={params}
           options={{
             drawerIcon: ({ color }) => <Icon name="graduation-cap" size={20} color={color} />,

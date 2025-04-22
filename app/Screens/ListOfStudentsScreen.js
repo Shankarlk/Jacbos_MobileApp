@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, FlatList, Switch, Button, Alert, StyleSheet, TextInput } from 'react-native';
+import { View, Text, FlatList, Switch, Button, Alert, StyleSheet,ActivityIndicator,TouchableOpacity, TextInput } from 'react-native';
 import axios from 'axios';
 import BASE_URL from "./apiConfig";
+import NoInternetBanner from "./NoInternetBanner"; 
 
 function ListOfStudentsScreen ({ route }) {   
     const { standardId } = route.params || {};
-    // console.log("ListOfStudentsScreen Loaded");
-    // console.log("Received standardId:", standardId);
+    const [loading, setLoading] = useState(true);
     const [students, setStudents] = useState([]);
     const [attendance, setAttendance] = useState({});
     const [searchText, setSearchText] = useState('');
@@ -41,41 +41,42 @@ function ListOfStudentsScreen ({ route }) {
     // };
 
     const fetchStudents = async () => {
+        setLoading(true); // Start loading
         try {
             const response = await axios.get(`${BASE_URL}/api/StudentApi/getallStudents?standardId=${standardId}`);
             const studentList = response.data;
     
-            // Fetch leave data for students
             const leaveResponse = await axios.get(`${BASE_URL}/api/StudentApi/getstudentleave?standardId=${standardId}`);
             const studentLeaves = leaveResponse.data;
     
-            const today = new Date().toISOString().split('T')[0]; // Get today's date in YYYY-MM-DD format
+            const today = new Date().toISOString().split('T')[0];
     
             const defaultAttendance = {};
             const disabledStudents = {};
     
             studentList.forEach(student => {
-                // Check if the student is on leave today
-                const isOnLeave = studentLeaves.some(leave => 
+                const isOnLeave = studentLeaves.some(leave =>
                     leave.studentId === student.id &&
                     today >= leave.fromDate.split('T')[0] &&
                     today <= leave.toDate.split('T')[0]
                 );
     
-                // If on leave, mark as absent (false) and disable toggle
                 defaultAttendance[student.id] = isOnLeave ? false : true;
-                disabledStudents[student.id] = isOnLeave; // true means disabled
+                disabledStudents[student.id] = isOnLeave;
             });
     
             setStudents(studentList);
-            setAttendance(defaultAttendance);
             setFilteredStudents(studentList);
-            setDisabledStudents(disabledStudents); // Store disabled states
+            setAttendance(defaultAttendance);
+            setDisabledStudents(disabledStudents);
         } catch (error) {
             Alert.alert("Error", "Failed to fetch students.");
             console.error(error);
+        } finally {
+            setLoading(false); // Stop loading
         }
     };
+    
     
 
     const toggleAttendance = (studentId) => {
@@ -120,31 +121,44 @@ function ListOfStudentsScreen ({ route }) {
 
     return (
         <View style={styles.container}>
-            <Text style={styles.header}>Mark Attendance</Text>
-            <TextInput
-                style={styles.searchInput}
-                placeholder="Search Student..."
-                value={searchText}
-                onChangeText={handleSearch}
-            />
-            <FlatList
-                data={filteredStudents}
-                keyExtractor={(item) => item.id.toString()}
-                renderItem={({ item }) => (
-                    <View style={styles.row}>
-                        <Text style={styles.studentName}>{item.studentName}</Text>
-                        <Switch
-                            value={attendance[item.id]}
-                            onValueChange={() => toggleAttendance(item.id)}
-                            disabled={disabledStudents[item.id]} // Disable toggle if student is on leave
-                        />
-                    </View>
-                )}
-            />
+            {loading ? (
+                <View style={styles.loadingContainer}>
+                    <ActivityIndicator size="large" color="#0000ff" />
+                    <Text>Loading students...</Text>
+                </View>
+            ) : (
+                <>
+      <NoInternetBanner />
+                    <Text style={styles.header}>Mark Attendance</Text>
+                    <TextInput
+                        style={styles.searchInput}
+                        placeholder="Search Student..."
+                        value={searchText}
+                        onChangeText={handleSearch}
+                    />
+                    <FlatList
+                        data={filteredStudents}
+                        keyExtractor={(item) => item.id.toString()}
+                        renderItem={({ item }) => (
+                            <View style={styles.row}>
+                                <Text style={styles.studentName}>{item.studentName}</Text>
+                                <Switch
+                                    value={attendance[item.id]}
+                                    onValueChange={() => toggleAttendance(item.id)}
+                                    disabled={disabledStudents[item.id]}
+                                />
+                            </View>
+                        )}
+                    />
+                    <TouchableOpacity style={styles.submitButton} onPress={submitAttendance}>
+                        <Text style={styles.submitButtonText}>Submit Attendance</Text>
+                    </TouchableOpacity>
 
-            <Button title="Submit Attendance" onPress={submitAttendance} />
+                </>
+            )}
         </View>
     );
+    
 };
 
 const styles = StyleSheet.create({
@@ -152,7 +166,23 @@ const styles = StyleSheet.create({
         flex: 1,
         padding: 20,
         backgroundColor: '#f5f5f5'
+    },loadingContainer: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center'
+    },    
+    submitButton: {
+        backgroundColor: 'black',
+        paddingVertical: 15,
+        borderRadius: 8,
+        alignItems: 'center',
+        marginTop: 10
     },
+    submitButtonText: {
+        color: 'white',
+        fontSize: 16,
+        fontWeight: 'bold'
+    },    
     header: {
         fontSize: 20,
         fontWeight: 'bold',

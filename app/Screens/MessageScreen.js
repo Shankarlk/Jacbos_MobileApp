@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { View, TextInput, Button, Alert, Linking, StyleSheet,Text } from 'react-native';
 import BASE_URL from "./apiConfig";
+import NoInternetBanner from "./NoInternetBanner"; 
 
 const MessageScreen = ({route}) => {
     const { student } = route.params;
@@ -25,6 +26,7 @@ const MessageScreen = ({route}) => {
 
     return (
         <View style={styles.container}>
+      <NoInternetBanner />
             {/* <TextInput
                 style={styles.input}
                 placeholder="Enter Parent's WhatsApp Number"
