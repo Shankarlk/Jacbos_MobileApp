@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { View, Text, FlatList, ScrollView, StyleSheet, ActivityIndicator,TouchableOpacity } from "react-native";
 import BASE_URL from "./apiConfig";
+import NoInternetBanner from "./NoInternetBanner"; 
 
-function SubjectContentScreen({ navigation,route }) {
-    const [events, setEvents] = useState([]);
+function StandardContentScreen({ navigation,route }) {
+    const [standard, SetStandard] = useState([]);
     const [loading, setLoading] = useState(true);
-    const { username, standardId } = route.params || { username: "Guest", loggeduser: "Unknown" };
+    const { username, loggeduser } = route.params || { username: "Guest", loggeduser: "Unknown" };
    
      useEffect(() => {
         fetchEventDetails();
@@ -13,13 +14,11 @@ function SubjectContentScreen({ navigation,route }) {
 
      const fetchEventDetails = async () => {
         try {      
-          // console.log(`${BASE_URL}/api/TimeTableApi/getallteachercourse?userId=${username}`);
-          const eventResponse = await fetch(`${BASE_URL}/api/TimeTableApi/getallteachercourse?userId=${username}`);
+          const eventResponse = await fetch(`${BASE_URL}/api/TimeTableApi/getallteacherstandard?userId=${username}`);
           const eventData = await eventResponse.json();
-          console.log("subject",eventData);
-          const filteredData = eventData.filter(item => item.standardId === standardId);
-          setEvents(filteredData);
-          console.log("filtered",filteredData);
+          console.log(eventData);
+          //const filteredData = eventData.filter(item => item.isClassTeacher === true);
+          SetStandard(eventData);
         } catch (err) {
           setError('Failed to fetch event details.');
           console.error(err);
@@ -32,9 +31,9 @@ function SubjectContentScreen({ navigation,route }) {
   const renderItem = ({ item }) => (
     <TouchableOpacity
       style={styles.card}
-      onPress={() => navigation.navigate("ChaptersListScreen", { CourseId: item.courseId })}
+      onPress={() => navigation.navigate("SubjectContent", { username:username,standardId: item.standardId })}
     >
-      <Text style={styles.title}>{item.courseName}</Text>
+      <Text style={styles.title}>{item.standardName}</Text>
     </TouchableOpacity>
   );
 
@@ -45,19 +44,13 @@ function SubjectContentScreen({ navigation,route }) {
       </View>
     );
   }
-  if (events.length === 0) {
-    return (
-      <View style={styles.loader}>
-        <Text style={styles.noDataText}>No subjects found for this class.</Text>
-      </View>
-    );
-  }
 
   return (
     <ScrollView style={styles.container}>
-      {/* <Text style={styles.heading}>Subjects</Text> */}
+      {/* <Text style={styles.heading}>Standards</Text> */}
+      <NoInternetBanner />
       <FlatList
-        data={events}
+        data={standard}
         renderItem={renderItem}
         keyExtractor={(item) => item.id.toString()}
         numColumns={2}
@@ -80,12 +73,6 @@ const styles = StyleSheet.create({
     marginBottom: 5,
     marginTop: 10,
   },
-  noDataText: {
-    fontSize: 18,
-    color: '#6c757d',
-    textAlign: 'center',
-    padding: 20,
-  },  
   row: {
     justifyContent: 'space-between',
   },
@@ -112,5 +99,5 @@ const styles = StyleSheet.create({
   },
 });
 
-export default SubjectContentScreen;
+export default StandardContentScreen;
 
