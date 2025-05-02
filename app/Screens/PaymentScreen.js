@@ -1,4 +1,6 @@
 import React, { useEffect, useState } from 'react';
+import { useFocusEffect } from "@react-navigation/native";
+import { useCallback } from "react";
 import { View, Text, StyleSheet, ActivityIndicator, FlatList } from 'react-native';
 import BASE_URL from "./apiConfig";
 
@@ -9,12 +11,19 @@ const PaymentScreen = ({ route }) => {
   
   const { username, loggeduser } = route.params || { username: "Guest", loggeduser: "Unknown" };
 
-  useEffect(() => {
-    fetchFeeDetails();
-  }, []);
+  // useEffect(() => {
+  //   fetchFeeDetails();
+  // }, []);
+  
+  useFocusEffect(
+    useCallback(() => {
+      fetchFeeDetails();  
+    }, [])
+  );
 
   const fetchFeeDetails = async () => {
     try {
+      setLoading(true);
       const response = await fetch(`${BASE_URL}/api/StudentApi/getpaymenthistory?userId=${username}`);
       const data = await response.json();
       var sortedData = data.sort((a, b) => a.installmentNum - b.installmentNum);
@@ -94,7 +103,7 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 18,
-    color:"blue",
+    color:"#0d6efd",
     marginBottom:5,
     fontWeight: 'bold',
   },

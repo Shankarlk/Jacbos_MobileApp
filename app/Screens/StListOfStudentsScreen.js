@@ -118,11 +118,15 @@ function StListOfStudentsScreen ({ route,navigation }) {
 />
 )}
 
-            <Button
+            {/* <Button
                 title="Send Message to All"
                 onPress={() => setModalVisible(true)}
                 color="#007AFF"
-            />        
+            />  */}
+            
+        <TouchableOpacity style={styles.button} onPress={() => setModalVisible(true)}>
+            <Text style={styles.buttonText}>Send Message to All</Text>
+        </TouchableOpacity>       
         <Modal
             animationType="slide"
             transparent={true}
@@ -131,7 +135,7 @@ function StListOfStudentsScreen ({ route,navigation }) {
         >
             <View style={styles.modalBackground}>
                 <View style={styles.modalContainer}>
-                    <Text style={styles.modalTitle}>Send Group Message</Text>
+                    <Text style={styles.modalTitle}>Send To All Message</Text>
                     <TextInput
                         style={styles.modalInput}
                         placeholder="Type your message..."
@@ -140,8 +144,8 @@ function StListOfStudentsScreen ({ route,navigation }) {
                         multiline
                     />
                     <View style={styles.modalButtons}>
-                        <Button title="Cancel" onPress={() => setModalVisible(false)} color="#888" />
-                        <Button title="Send" onPress={sendWhatsAppToAll} color="#007AFF" />
+                        <Button title="Cancel" onPress={() => setModalVisible(false)} color="red" />
+                        <Button title="Send" onPress={sendWhatsAppToAll} color="black" />
                     </View>
                 </View>
             </View>
@@ -182,7 +186,8 @@ const styles = StyleSheet.create({
         borderRadius: 8
     },
     studentName: {
-        fontSize: 16
+        fontSize: 16,
+        color:"#0d6efd"
     },modalBackground: {
         flex: 1,
         justifyContent: 'center',
@@ -214,7 +219,17 @@ const styles = StyleSheet.create({
     modalButtons: {
         flexDirection: 'row',
         justifyContent: 'space-between'
-    }    
+    },
+    button: {
+      backgroundColor: 'black',
+      padding: 10,
+      borderRadius: 5,
+      alignItems: 'center',
+    },
+    buttonText: {
+      color: 'white',
+      fontWeight: 'bold',
+    },
 });
 
 export default StListOfStudentsScreen;

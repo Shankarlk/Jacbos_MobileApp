@@ -1,4 +1,6 @@
 import React, { useEffect, useState } from 'react';
+import { useFocusEffect } from "@react-navigation/native";
+import { useCallback } from "react";
 import { View, Text, FlatList, StyleSheet, ActivityIndicator,TouchableOpacity } from 'react-native';
 import BASE_URL from "./apiConfig";
 
@@ -9,9 +11,14 @@ const TestResultScreen = ({ route,navigation }) => {
 
   const { username, loggeduser } = route.params || { username: "Guest", loggeduser: "Unknown" };
 
-  useEffect(() => {
-    fetchTestResults();
-  }, []);
+      useFocusEffect(
+          useCallback(() => {
+            fetchTestResults();  // Replace with your actual fetch method
+          }, [])
+        );
+  // useEffect(() => {
+  //   fetchTestResults();
+  // }, []);
   const formatDate = (dateString) => {
     const date = new Date(dateString);
     const day = String(date.getDate()).padStart(2, '0');
@@ -22,23 +29,24 @@ const TestResultScreen = ({ route,navigation }) => {
 
   const fetchTestResults = async () => {
     try {
+      setLoading(true);
       const response = await fetch(`${BASE_URL}/api/StudentApi/gettestresult?userId=${username}`);
       const data = await response.json();
 
-let seen = new Set();
-let uniqueData = data.filter(item => {
-    if (!seen.has(item.unitTestName)) {
-        seen.add(item.unitTestName);
-        return true; // Keep this item
-    }
-    return false; // Skip duplicates
-});
+      let seen = new Set();
+      let uniqueData = data.filter(item => {
+          if (!seen.has(item.unitTestName)) {
+              seen.add(item.unitTestName);
+              return true; // Keep this item
+          }
+          return false; // Skip duplicates
+      });
 
-let sortedData = uniqueData.sort((a, b) => 
-    a.unitTestName.localeCompare(b.unitTestName, undefined, { numeric: true })
-);
+      let sortedData = uniqueData.sort((a, b) => 
+          a.unitTestName.localeCompare(b.unitTestName, undefined, { numeric: true })
+      );
 
-console.log(sortedData);
+      console.log(sortedData);
 
       setTestResults(sortedData);
     } catch (err) {
@@ -116,7 +124,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   testname:{
-    color:"blue",
+    color:"#0d6efd",
     fontSize:20
   },
   card: {

@@ -133,42 +133,59 @@ export default function FullStudentMarksListScreen({ route }) {
                     <Text style={styles.buttonText}>Download Excel</Text>
                 </TouchableOpacity>
             </View>
-
+    
             <View style={styles.table}>
                 {loading ? (
                     <ActivityIndicator size="large" color="#0000ff" />
                 ) : filteredData.length === 0 ? (
                     <Text style={styles.noData}>No records found</Text>
                 ) : (
-                    <FlatList
-                    data={filteredData}
-                    keyExtractor={(item, index) => index.toString()}
-                    renderItem={({ item }) => (
-                        <View style={styles.questionCard}>
-                            <Text style={styles.studentName}>Student Name: {item.studentName}</Text>
-                            {canShow("English") && <Text style={styles.questionText}>English: {item.english}</Text>}
-                            {canShow("Hindi") && <Text style={styles.questionText}>Hindi: {item.hindi}</Text>}
-                            {canShow("Kannada") && <Text style={styles.questionText}>Kannada: {item.kannada}</Text>}
-                            {canShow("Maths") && <Text style={styles.questionText}>Maths: {item.maths}</Text>}
-                            {canShow("Science") && <Text style={styles.questionText}>Science: {item.science}</Text>}
-                            {canShow("SocialScience") && <Text style={styles.questionText}>Social Science: {item.socialScience}</Text>}
-                    
+                    <>
+                        {/* Table Header */}
+                        <View style={styles.tableRowHeader}>
+                            <Text style={styles.tableCellHeader}>Name</Text>
+                            {canShow("English") && <Text style={styles.tableCellHeader}>Eng</Text>}
+                            {canShow("Hindi") && <Text style={styles.tableCellHeader}>Hin</Text>}
+                            {canShow("Kannada") && <Text style={styles.tableCellHeader}>Kan</Text>}
+                            {canShow("Maths") && <Text style={styles.tableCellHeader}>Math</Text>}
+                            {canShow("Science") && <Text style={styles.tableCellHeader}>Sci</Text>}
+                            {canShow("SocialScience") && <Text style={styles.tableCellHeader}>Soc</Text>}
                             {isClassTeacher && (
                                 <>
-                                    <Text style={styles.questionText}>Total Obtained Marks: {parseInt(item.obtainedMarks)}</Text>
-                                    <Text style={styles.questionText}>Total Max Marks: {parseInt(item.totalMarks)}</Text>
+                                    <Text style={styles.tableCellHeader}>Obtd</Text>
+                                    <Text style={styles.tableCellHeader}>Max</Text>
                                 </>
                             )}
                         </View>
-                    )}
-                    
-                    />
-                
-
+    
+                        {/* Table Rows */}
+                        <FlatList
+                            data={filteredData}
+                            keyExtractor={(item, index) => index.toString()}
+                            renderItem={({ item }) => (
+                                <View style={styles.tableRow}>
+                                    <Text style={styles.tableCell}>{item.studentName}</Text>
+                                    {canShow("English") && <Text style={styles.tableCell}>{item.english}</Text>}
+                                    {canShow("Hindi") && <Text style={styles.tableCell}>{item.hindi}</Text>}
+                                    {canShow("Kannada") && <Text style={styles.tableCell}>{item.kannada}</Text>}
+                                    {canShow("Maths") && <Text style={styles.tableCell}>{item.maths}</Text>}
+                                    {canShow("Science") && <Text style={styles.tableCell}>{item.science}</Text>}
+                                    {canShow("SocialScience") && <Text style={styles.tableCell}>{item.socialScience}</Text>}
+                                    {isClassTeacher && (
+                                        <>
+                                            <Text style={styles.tableCell}>{parseInt(item.obtainedMarks)}</Text>
+                                            <Text style={styles.tableCell}>{parseInt(item.totalMarks)}</Text>
+                                        </>
+                                    )}
+                                </View>
+                            )}
+                        />
+                    </>
                 )}
             </View>
         </View>
     );
+    
 }
 
 const styles = StyleSheet.create({
@@ -223,6 +240,34 @@ const styles = StyleSheet.create({
       marginBottom: 4,
       color: '#333',
     },
+    tableRowHeader: {
+        flexDirection: "row",
+        backgroundColor: "#e0e0e0",
+        paddingVertical: 8,
+        paddingHorizontal: 4,
+        borderTopLeftRadius: 6,
+        borderTopRightRadius: 6,
+    },
+    tableRow: {
+        flexDirection: "row",
+        borderBottomWidth: 1,
+        borderColor: "#ccc",
+        paddingVertical: 8,
+        paddingHorizontal: 4,
+    },
+    tableCellHeader: {
+        flex: 1,
+        fontWeight: "bold",
+        fontSize: 14,
+        textAlign: "center",
+        color: "#333",
+    },
+    tableCell: {
+        flex: 1,
+        fontSize: 13,
+        textAlign: "center",
+        color: "#555",
+    },    
     input: {
         height: 40,
         borderColor: "#ccc",

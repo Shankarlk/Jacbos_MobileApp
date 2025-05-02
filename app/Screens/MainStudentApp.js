@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'; 
-import { View, Text, Image, StyleSheet, TouchableOpacity } from "react-native";
+import { View, Text, Image, StyleSheet, TouchableOpacity,Alert } from "react-native";
 import { createDrawerNavigator, DrawerContentScrollView, DrawerItemList } from "@react-navigation/drawer";
 import { useNavigation } from "@react-navigation/native";
 import StudentDashboardScreen from "./StudentDashboardScreen";
@@ -31,7 +31,22 @@ const CustomDrawerContent = (props) => {
 
       {/* Bottom Logout Button */}
       <View style={styles.footer}>
-        <TouchableOpacity onPress={() => navigation.navigate("Login")} style={styles.logoutButton}>
+        <TouchableOpacity onPress={() => {
+            Alert.alert(
+              "Confirm Logout",
+              "Are you sure you want to logout?",
+              [
+                {
+                  text: "No",
+                  style: "cancel"
+                },
+                {
+                  text: "Yes",
+                  onPress: () => navigation.navigate("Login")
+                }
+              ]
+            );
+          }} style={styles.logoutButton}>
           <Icon name="sign-out" size={20} color="red" />
           <Text style={styles.logoutText}>Logout</Text>
         </TouchableOpacity>

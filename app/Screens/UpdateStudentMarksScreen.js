@@ -40,9 +40,9 @@ const UpdateStudentMarks = ({ route }) => {
     console.log("Rendering Item:", item);
     return (
       <TouchableOpacity style={styles.row}
-      onPress={() => navigation.navigate("UpdateStudentScoresScreen", { unitTestId: item.id , unitTestName: item.testNum,username:username})}
-      >
-        <Text style={styles.cell}>{item.testNum || "No TestNum"}</Text>
+      onPress={() => navigation.navigate("UpdateStudentScoresScreen", { unitTestId: item.id , unitTestName: item.testNum,username:username,standardId:item.standardId})}
+      > 
+        <Text style={styles.testname}>{item.testNum || "No TestNum"}</Text>
         <Text style={styles.cell}>{item.standardName || "No StandardName"}</Text>
       </TouchableOpacity>
     );
@@ -114,6 +114,11 @@ const styles = StyleSheet.create({
     paddingHorizontal: 5,
     borderBottomWidth: 1,
     borderBottomColor: "#eee",
+  },
+  testname: {
+    flex: 1,
+    textAlign: "center",
+    color:"#0d6efd"
   },
   cell: {
     flex: 1,

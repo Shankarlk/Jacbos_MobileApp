@@ -27,7 +27,7 @@ const LoginScreen = ({ navigation }) => {
   
     try {
       // const BASE_URL = "${BASE_URL}";
-      const response = await axios.post(`http://192.168.109.122:5000/api/login`, {
+      const response = await axios.post(`${BASE_URL}/api/login`, {
         "Username": uname,
         "password": pwd,
         "EmailAddress": uname

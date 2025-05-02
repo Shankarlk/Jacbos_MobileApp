@@ -108,7 +108,7 @@ const styles = StyleSheet.create({
     elevation: 3,
   },
   subject: {
-    color:"blue",
+    color:"#0d6efd",
     fontSize: 18,
     fontWeight: "bold",
   },

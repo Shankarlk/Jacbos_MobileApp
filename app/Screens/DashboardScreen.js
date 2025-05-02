@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, FlatList, TouchableOpacity, ImageBackground, StyleSheet, Dimensions } from "react-native";
+import { useFocusEffect } from "@react-navigation/native";
+import { useCallback } from "react";
+import { View, Text, FlatList, TouchableOpacity, ImageBackground,BackHandler, StyleSheet, Dimensions,Alert } from "react-native";
 import axios from "axios";
 import Icon from "react-native-vector-icons/FontAwesome";
 import BASE_URL from "./apiConfig";
@@ -13,10 +15,40 @@ const DashboardScreen = ({ navigation, route }) => {
   const [numberOfClasses, setNumberOfClasses] = useState("0");
   const [numberOfCourses, setNumberOfCourses] = useState("0");
 
-  useEffect(() => {
-    fetchSchedule();
-  }, []);
-
+      useFocusEffect(
+          useCallback(() => {
+            fetchSchedule();  // Replace with your actual fetch method
+          }, [])
+        );
+  
+        useFocusEffect(
+          React.useCallback(() => {
+            const onBackPress = () => {
+              Alert.alert(
+                "Confirm Logout",
+                "Are you sure you want to logout?",
+                [
+                  {
+                    text: "No",
+                    style: "cancel",
+                    onPress: () => null
+                  },
+                  {
+                    text: "Yes",
+                    onPress: () => navigation.navigate("Login")
+                  }
+                ]
+              );
+              return true; // Prevent default back action
+            };
+        
+            BackHandler.addEventListener('hardwareBackPress', onBackPress);
+        
+            return () =>
+              BackHandler.removeEventListener('hardwareBackPress', onBackPress);
+          }, [])
+        );
+        
   const fetchSchedule = async () => {
     try {
       if (!username) {
@@ -45,7 +77,7 @@ const DashboardScreen = ({ navigation, route }) => {
   );
 
   return (
-    <ImageBackground source={require("../assets/dashbg.jpeg")} style={styles.background}>
+    <View style={styles.background}>
       <View style={styles.container}>
         <View style={styles.header}>
           {/* <Text style={styles.title}>{loggeduser}</Text> */}
@@ -63,13 +95,13 @@ const DashboardScreen = ({ navigation, route }) => {
           />
         )}
       </View>
-    </ImageBackground>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
-  background: { flex: 1, backgroundColor: "#F5F5F5" },
-  container: { padding: 20 },noDataText: {
+  background: { flex: 1, backgroundColor: "white" },
+  container: { padding: 5 },noDataText: {
     fontSize: 16,
     textAlign: 'center',
     marginTop: 20,
@@ -79,11 +111,11 @@ const styles = StyleSheet.create({
   menuButton: { padding: 10, backgroundColor: "white", borderRadius: 5 },
   statsContainer: { flexDirection: "row", justifyContent: "space-around", marginBottom: 20 },
   statBox: { backgroundColor: "white", padding: 15, borderRadius: 10, alignItems: "center", width: "45%" },
-  sectionTitle: { fontSize: 20, fontWeight: "bold", marginVertical: 10 },
-  scheduleList: { paddingVertical: 10 },
-  scheduleCard: { backgroundColor: "#EDEDED", padding: 15, margin: 5, borderRadius: 8, width: width * 0.45, alignItems: "center" },
-  subject: { fontSize: 18, fontWeight: "bold", color: "#673AB7" },
-  standard: { fontSize: 16, color: "gray" },
+  sectionTitle: { fontSize: 20, fontWeight: "bold", marginVertical: 10,marginLeft:100 },
+  scheduleList: { paddingVertical: 1 },
+  scheduleCard: { backgroundColor: "#f8f9fa",elevation: 2,shadowColor: '#000', shadowOffset: { width: 0, height: 1 },padding: 15, margin: 5, borderRadius: 10, width: width * 0.45, alignItems: "center" },
+  subject: { fontSize: 18, fontWeight: "bold", color: "#0d6efd" },
+  standard: { fontSize: 16, color: "#212529" },
   time: { fontSize: 14, marginTop: 5 }
 });
 

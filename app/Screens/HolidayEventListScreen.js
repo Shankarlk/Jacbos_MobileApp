@@ -107,7 +107,7 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 16,
-    color:"blue",
+    color:"#0d6efd",
     fontWeight: 'bold',
   },
   date: {

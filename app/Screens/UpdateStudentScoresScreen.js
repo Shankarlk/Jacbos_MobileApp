@@ -11,7 +11,7 @@ const UpdateStudentScoresScreen = ({ route }) => {
   const [loading, setLoading] = useState(true);
 
   const navigation = useNavigation();
-  const { unitTestId, unitTestName,username } = route.params; 
+  const { unitTestId, unitTestName,username,standardId } = route.params; 
   const [dispalyStudents, setDisplayStudents] = useState([]);
   const [courses, setCourses] = useState([]); 
   const [openDropdown, setOpenDropdown] = useState(null);
@@ -36,7 +36,13 @@ const UpdateStudentScoresScreen = ({ route }) => {
     loadData();
   }, []);
   
-
+  const shortenUnitTestName = (unitTestName) => {
+    const parts = unitTestName.trim().split(" ");
+    const initials = parts.slice(0, 2).map(word => word[0].toUpperCase()).join("");
+    const suffix = parts.slice(2).join(" "); // Get "1" or anything else after first two words
+    return suffix ? `${initials} ${suffix}` : initials;
+  }
+  
   const fetchStudents = async () => {
     try {
       const response = await fetch(`${BASE_URL}/api/UpdateStudentMarksApi/getstudents?Id=${unitTestId}`);
@@ -45,7 +51,7 @@ const UpdateStudentScoresScreen = ({ route }) => {
       const data = await response.json();
       const updatedData = data.map(student => ({
         ...student,
-        unitTestName,
+        shortName: shortenUnitTestName(unitTestName),
         selectedCourse: null, // Store selected course for each student
         marks: student.marks ?? "",
       }));
@@ -57,16 +63,17 @@ const UpdateStudentScoresScreen = ({ route }) => {
 
   const fetchCourses = async () => {
     try {
-      const response = await fetch(`${BASE_URL}/api/TimeTableApi/getallcourses?userId=${encodeURIComponent(username)}`);
+      const response = await fetch(`${BASE_URL}/api/UpdateStudentMarksApi/getallcourses?userId=${username}&Id=${unitTestId}`);
       if (!response.ok) throw new Error("Failed to fetch courses");
 
       const data = await response.json();
-      console.log(data);
+      console.log(data,username);
       const formattedCourses = data.map(course => ({
         label: course.text,
         value: course.value,
       }));
       setCourses(formattedCourses);
+      console.log(`${BASE_URL}/api/TimeTableApi/getallcourses?userId=${username}`);
     } catch (error) {
       console.error("Error fetching courses:", error);
     }
@@ -107,6 +114,7 @@ const UpdateStudentScoresScreen = ({ route }) => {
 
       const result = await response.json();
       alert("Scores updated successfully!");
+      console.log("result",result)
       // Toast.show({
       //   type: "success",
       //   text1: "Success",
@@ -121,7 +129,7 @@ const UpdateStudentScoresScreen = ({ route }) => {
   const renderItem = ({ item, index }) => (
     <View style={[styles.row, { zIndex: dispalyStudents.length - index }]}>
       <Text style={styles.cell}>{item.studentName}</Text>
-      <Text style={styles.cell}>{item.unitTestName}</Text>
+      <Text style={styles.cell}>{item.shortName}</Text>
   
       <View style={styles.dropdown}>
         <DropDownPicker
@@ -138,7 +146,7 @@ const UpdateStudentScoresScreen = ({ route }) => {
           style={styles.dropdownPicker}
           dropDownContainerStyle={styles.dropdownContainer}
           zIndex={dispalyStudents.length - index}
-          zIndexInverse={index}
+          zIndexInverse={999}
         />
       </View>
   
@@ -150,6 +158,7 @@ const UpdateStudentScoresScreen = ({ route }) => {
       />
     </View>
   );
+  
   if (loading) {
     return (
       <View style={styles.loadingContainer}>
@@ -208,7 +217,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
   },
   
-  container: { flex: 1, padding: 10,marginTop:20, backgroundColor: "#fff" },
+  container: { flex: 1, padding: 10,marginTop:20,marginBottom:150, backgroundColor: "#fff" },
   header: { flexDirection: "row", alignItems: "center", paddingBottom: 10, borderBottomWidth: 1, borderBottomColor: "#ccc" },
   headerText: { fontSize: 18, fontWeight: "bold", marginLeft: 10 },
   tableHeader: { flexDirection: "row", backgroundColor: "#ddd", paddingVertical: 10, paddingHorizontal: 5 },
@@ -217,7 +226,7 @@ const styles = StyleSheet.create({
   cell: { flex: 1, textAlign: "center" },
   dropdown: { flex: 1, borderWidth: 1, borderColor: "#ccc", borderRadius: 5, padding: 5 },
   buttonContainer: { flexDirection: "row", justifyContent: "space-between", marginTop: 20 },
-  button: { flex: 1, marginHorizontal: 5 },
+  button: { flex: 1, marginHorizontal: 5,backgroundColor:"black" },
   dropdown: {
     flex: 1,
     zIndex: 100, // Ensures dropdown appears above other elements

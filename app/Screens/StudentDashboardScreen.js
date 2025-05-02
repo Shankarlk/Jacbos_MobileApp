@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react'; 
-import { View, Text, ImageBackground, StyleSheet } from "react-native";
+import { useFocusEffect } from "@react-navigation/native";
+import { useCallback } from "react";
+import { View, Text, ImageBackground, StyleSheet,BackHandler,Alert } from "react-native";
 import BASE_URL from "./apiConfig";
 
 const StudentDashboardScreen = ({ route }) => {
@@ -7,29 +9,62 @@ const StudentDashboardScreen = ({ route }) => {
   const [student, setStudent] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    const fetchStudentDetails = async () => {
-      try {
-        const response = await fetch(
-          `${BASE_URL}/api/StudentApi/getstudentdetails?userId=${username}`
+    useFocusEffect(
+            useCallback(() => {
+              fetchStudentDetails();
+            }, [userId])
+          );
+  // useEffect(() => {
+  //   fetchStudentDetails();
+  // }, [userId]);
+
+  const fetchStudentDetails = async () => {
+    try {
+      const response = await fetch(
+        `${BASE_URL}/api/StudentApi/getstudentdetails?userId=${username}`
+      );
+      const data = await response.json();
+      setStudent(data);
+      console.log("Fetched Student Data:", data);
+    } catch (error) {
+      console.error("Error fetching student details:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+  
+  useFocusEffect(
+    React.useCallback(() => {
+      const onBackPress = () => {
+        Alert.alert(
+          "Confirm Logout",
+          "Are you sure you want to logout?",
+          [
+            {
+              text: "No",
+              style: "cancel",
+              onPress: () => null
+            },
+            {
+              text: "Yes",
+              onPress: () => navigation.navigate("Login")
+            }
+          ]
         );
-        const data = await response.json();
-        setStudent(data);
-        console.log("Fetched Student Data:", data);
-      } catch (error) {
-        console.error("Error fetching student details:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchStudentDetails();
-  }, [userId]);
+        return true; // Prevent default back action
+      };
+  
+      BackHandler.addEventListener('hardwareBackPress', onBackPress);
+  
+      return () =>
+        BackHandler.removeEventListener('hardwareBackPress', onBackPress);
+    }, [])
+  );
+  
 
   return (
-    <ImageBackground
-      source={require("../assets/dashbg.jpeg")}
+    <View
       style={styles.background}
-      resizeMode="stretch"
     >
       <View style={styles.container}>
         {/* Show loading text until data is fetched */}
@@ -50,7 +85,7 @@ const StudentDashboardScreen = ({ route }) => {
           <Text style={styles.errorText}>Student details not available</Text>
         )}
       </View>
-    </ImageBackground>
+    </View>
   );
 };
 

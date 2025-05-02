@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { View, Text, Image } from 'react-native';
+import { Video } from 'expo-av';
 import BASE_URL from './apiConfig';
 
 function FileViewerScreen({ route }) {

@@ -1,14 +1,14 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from "react";
 import { View, TextInput, Button, Alert, Linking, StyleSheet,Text,TouchableOpacity,ActivityIndicator } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import DropDownPicker from "react-native-dropdown-picker";
 import BASE_URL from "./apiConfig";
 import NoInternetBanner from "./NoInternetBanner"; 
 
-const LeaveManagementScreen = ({route}) => {
-  const { username, loggeduser,isClassteacher } = route.params || { username: "Guest", loggeduser: "Unknown" };
+const EditLeaveRequestScreen = ({route}) => {
+    const [loading, setLoading] = useState(false);
+    const { username, loggeduser, isClassteacher, leaveItem } = route.params || {};
   const isTeacher = isClassteacher;
-  const [loading, setLoading] = useState(false);
     const [phoneNumber, setPhoneNumber] = useState('');
     const [message, setMessage] = useState('');
     const [open, setOpen] = useState(false);
@@ -26,6 +26,14 @@ const LeaveManagementScreen = ({route}) => {
     const [showFromDatePicker, setShowFromDatePicker] = useState(false);
     const [showToDatePicker, setShowToDatePicker] = useState(false);
     // console.log(student);
+    useEffect(() => {
+        if (leaveItem) {
+          setLeaveType(leaveItem.leaveType || '');
+          setLeaveMessage(leaveItem.leaveReason || '');
+          setFromDate(new Date(leaveItem.fromDate));
+          setToDate(new Date(leaveItem.toDate));
+        }
+      }, [leaveItem]);
     const handleFromDateChange = (event, selectedDate) => {
         setShowFromDatePicker(false);
         if (selectedDate) setFromDate(selectedDate);
@@ -61,59 +69,59 @@ const LeaveManagementScreen = ({route}) => {
         }
         setLoading(true);
         if(isTeacher == true){
-          try {
-            const fromDtval = new Date(fromDate);
-            const toDtval = new Date(toDate);
-            const today = new Date();
-  
-            if (!username || !leavemessage || !fromDtval || !toDtval) {
-                alert("Please fill in all fields.");
-                return;
-            }
-  
-            // Validate Date Range
-            if (fromDtval < today.setHours(0, 0, 0, 0)) {
-                alert("From Date cannot be in the past.");
-                return;
-            }
-  
-            if (toDtval < fromDtval) {
-                alert("To Date cannot be before From Date.");
-                return;
-            }
-  
-              const fromDt = new Date(fromDate).toISOString();
-              const toDt = new Date(toDate).toISOString();
-              const response = await fetch(`${BASE_URL}/api/TimeTableApi/leavemanagement`, {
-                  method: "POST",
-                  headers: {
-                      "Content-Type": "application/json"
-                  },
-                  body: JSON.stringify({
-                      id:0,
-                      userId: username,
-                      teacherId:0,
-                      leaveType:leaveType,
-                      leaveReason: leavemessage,
-                      fromDate: fromDt,
-                      toDate: toDt
-                  })
-              });
-          const eventData = await response.json();
-          console.log("Repsonse : ",eventData);
-          if(eventData.Message == undefined){
-              alert('Message Not Sent');
-          }else{
-          alert(eventData.Message);
+            try {
+                
+          const fromDtval = new Date(fromDate);
+          const toDtval = new Date(toDate);
+          const today = new Date();
+
+          if (!username || !leavemessage || !fromDtval || !toDtval) {
+              alert("Please fill in all fields.");
+              return;
           }
-          } catch (error) {
-              console.error(error);
-              alert("An error occurred. Please try again.");
-          } finally {
-              setLoading(false); // stop loading
+
+          // Validate Date Range
+          if (fromDtval < today.setHours(0, 0, 0, 0)) {
+              alert("From Date cannot be in the past.");
+              return;
           }
+
+          if (toDtval < fromDtval) {
+              alert("To Date cannot be before From Date.");
+              return;
+          }
+
+            const fromDt = new Date(fromDate).toISOString();
+            const toDt = new Date(toDate).toISOString();
+            const response = await fetch(`${BASE_URL}/api/TimeTableApi/leavemanagement`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    id: leaveItem ? leaveItem.id : 0,
+                    userId: username,
+                    teacherId:0,
+                    leaveType:leaveType,
+                    leaveReason: leavemessage,
+                    fromDate: fromDt,
+                    toDate: toDt
+                })
+            });
+        const eventData = await response.json();
+        console.log("Repsonse : ",eventData);
+        if(eventData.Message == undefined){
+            alert('Message Not Sent');
         }else{
-          try {
+        alert(eventData.Message);
+        }
+                } catch (error) {
+                    console.error(error);
+                    alert("An error occurred. Please try again.");
+                } finally {
+                    setLoading(false); // stop loading
+                }
+        }else{
             const fromDt = new Date(fromDate).toISOString();
             const toDt = new Date(toDate).toISOString();
             console.log("Parent Sending...",`{
@@ -145,31 +153,25 @@ const LeaveManagementScreen = ({route}) => {
             }else{
             alert(eventData.Message);
             }
-          } catch (error) {
-              console.error(error);
-              alert("An error occurred. Please try again.");
-          } finally {
-              setLoading(false); // stop loading
-          }
         }
     };
 
     return (
             <View style={styles.container}>
-            {loading && (
-              <View style={{
-                position: 'absolute',
-                top: 0,
-                left: 0,
-                height: '100%',
-                width: '100%',
-                justifyContent: 'center',
-                alignItems: 'center',
-                zIndex: 1000
-              }}>
-                <ActivityIndicator size="large" color="#007BFF" />
-              </View>
-            )}
+                        {loading && (
+                          <View style={{
+                            position: 'absolute',
+                            top: 0,
+                            left: 0,
+                            height: '100%',
+                            width: '100%',
+                            justifyContent: 'center',
+                            alignItems: 'center',
+                            zIndex: 1000
+                          }}>
+                            <ActivityIndicator size="large" color="#007BFF" />
+                          </View>
+                        )}
               <View style={styles.modalContainer}>
                 <View style={styles.modalContent}>
             {/* <Text style={styles.row}>Enter The Leave Reason</Text>
@@ -196,8 +198,8 @@ const LeaveManagementScreen = ({route}) => {
             {showToDatePicker && (
                 <DateTimePicker value={toDate || new Date()} mode="date" display="default" onChange={handleToDateChange} />
             )}
-           {isTeacher && (
-              <>
+           
+              
                 <Text style={styles.row}>Leave Type</Text>
                 <TextInput
                   style={styles.input}
@@ -205,8 +207,8 @@ const LeaveManagementScreen = ({route}) => {
                   value={leaveType}
                   onChangeText={setLeaveType}
                 />
-              </>
-            )}
+              
+            
 
             <Text style={styles.row}>Enter The Leave Message</Text>
             <TextInput
@@ -341,4 +343,4 @@ const styles = StyleSheet.create({
     },
   });
 
-export default LeaveManagementScreen;
+export default EditLeaveRequestScreen;

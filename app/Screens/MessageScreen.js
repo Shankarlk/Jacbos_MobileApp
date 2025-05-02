@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, TextInput, Button, Alert, Linking, StyleSheet,Text } from 'react-native';
+import { View, TextInput, Button, Alert, Linking, StyleSheet,Text,TouchableOpacity } from 'react-native';
 import BASE_URL from "./apiConfig";
 import NoInternetBanner from "./NoInternetBanner"; 
 
@@ -43,7 +43,10 @@ const MessageScreen = ({route}) => {
                 value={message}
                 onChangeText={setMessage}
             />
-            <Button title="Send WhatsApp Message" onPress={sendWhatsAppMessage} />
+            {/* <Button title="Send WhatsApp Message" onPress={sendWhatsAppMessage} /> */}
+            <TouchableOpacity style={styles.button} onPress={sendWhatsAppMessage}>
+                <Text style={styles.buttonText}>Send WhatsApp Message</Text>
+            </TouchableOpacity>
         </View>
     );
 };
@@ -76,6 +79,16 @@ const styles = StyleSheet.create({
         padding: 10,
         marginVertical: 5,
         borderRadius: 8
+    },
+    button: {
+      backgroundColor: 'black',
+      padding: 10,
+      borderRadius: 5,
+      alignItems: 'center',
+    },
+    buttonText: {
+      color: 'white',
+      fontWeight: 'bold',
     },
 });
 

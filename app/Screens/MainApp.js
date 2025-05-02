@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, Image, StyleSheet, TouchableOpacity } from "react-native";
+import { View, Text, Image, StyleSheet, TouchableOpacity,Alert } from "react-native";
 import { createDrawerNavigator, DrawerContentScrollView, DrawerItemList } from "@react-navigation/drawer";
 import { useNavigation } from "@react-navigation/native";
 import DashboardScreen from "./DashboardScreen";
@@ -11,7 +11,8 @@ import StudentMarksStack from "./StudentMarksStack";
 import StandardMessageStack from "./StandardMessageStack";
 import AttendanceStack from "./AttendanceStack";
 import StudentLeaveManagementTeacher from "./StudentLeaveManagementTeacher";
-import LeaveManagementScreen from "./LeaveManagementScreen";
+import LeaveListScreen from "./LeaveListScreen";
+import LeaveRequestStack from "./LeaveRequestStack";
 import QuestionStackNavigator from "./QuestionStackNavigator";
 import OverallStudentAttendance from "./OverallStudentAttendance";
 import ChangePasswordTeacher from "./ChangePasswordTeacher";
@@ -37,7 +38,23 @@ const CustomDrawerContent = (props) => {
 
       {/* Bottom Logout Button */}
       <View style={styles.footer}>
-        <TouchableOpacity onPress={() => navigation.navigate("Login")} style={styles.logoutButton}>
+        <TouchableOpacity onPress={() => {
+    Alert.alert(
+      "Confirm Logout",
+      "Are you sure you want to logout?",
+      [
+        {
+          text: "No",
+          style: "cancel"
+        },
+        {
+          text: "Yes",
+          onPress: () => navigation.navigate("Login")
+        }
+      ]
+    );
+  }}
+ style={styles.logoutButton}>
           <Icon name="sign-out" size={20} color="red" />
           <Text style={styles.logoutText}>Logout</Text>
         </TouchableOpacity>
@@ -69,8 +86,16 @@ function DrawerNavigator({ screenProps }) {
           }}
         />
         <Drawer.Screen
-          name="Request For Leave"
-          component={LeaveManagementScreen}
+          name="Subject Content"
+          component={SubjectStackNavigator}
+          initialParams={params}
+          options={{
+            drawerIcon: ({ color }) => <Icon name="book" size={20} color={color} />,
+          }}
+        />
+        <Drawer.Screen
+          name="Leave Request"
+          component={LeaveRequestStack}
           initialParams={{ ...params, isClassteacher: true }}
           options={{
             drawerIcon: ({ color }) => <Icon name="folder-open" size={20} color={color} />,
@@ -108,67 +133,59 @@ function DrawerNavigator({ screenProps }) {
         )}
   
         <Drawer.Screen
+                name="Student Marks"
+                component={StudentMarksStack}
+                initialParams={params}
+                options={{
+                  drawerIcon: ({ color }) => <Icon name="bar-chart" size={20} color={color} />,
+                }}
+          />
+          <Drawer.Screen
+            name="Exam List"
+            component={UnitTestScreen}
+            initialParams={params}
+            options={{
+              drawerIcon: ({ color }) => <Icon name="list-alt" size={20} color={color} />,
+            }}
+          />
+          <Drawer.Screen
+            name="Student Score"
+            component={StudentScoreStack}
+            initialParams={params}
+            options={{
+              drawerIcon: ({ color }) => <Icon name="graduation-cap" size={20} color={color} />,
+            }}
+          />
+          <Drawer.Screen
+            name="Auto Generate Question Paper"
+            initialParams={params}
+            component={QuestionStackNavigator}
+            options={{
+              drawerIcon: ({ color }) => <Icon name="file-text" size={20} color={color} />,
+            }}
+          />
+          <Drawer.Screen
+            name="Generate Question Paper Manually"
+            component={ManualQuestionScreen}
+            initialParams={params}
+            options={{
+              drawerIcon: ({ color }) => <Icon name="pencil" size={20} color={color} />,
+            }}
+          />
+          <Drawer.Screen
+            name="Change Password "
+            component={ChangePasswordTeacher}
+            initialParams={params}
+            options={{
+              drawerIcon: ({ color }) => <Icon name="lock" size={20} color={color} />,
+            }}
+          />
+        <Drawer.Screen
           name="Send Message To Parents"
           component={StandardMessageStack}
           initialParams={params}
           options={{
             drawerIcon: ({ color }) => <Icon name="comments" size={20} color={color} />,
-          }}
-        />
-        <Drawer.Screen
-          name="Test List"
-          component={UnitTestScreen}
-          initialParams={params}
-          options={{
-            drawerIcon: ({ color }) => <Icon name="list-alt" size={20} color={color} />,
-          }}
-        />
-        <Drawer.Screen
-          name="Update Student Marks"
-          component={StudentScoreStack}
-          initialParams={params}
-          options={{
-            drawerIcon: ({ color }) => <Icon name="graduation-cap" size={20} color={color} />,
-          }}
-        />
-        <Drawer.Screen
-          name="Student Marks List"
-          component={StudentMarksStack}
-          initialParams={params}
-          options={{
-            drawerIcon: ({ color }) => <Icon name="bar-chart" size={20} color={color} />,
-          }}
-        />
-        <Drawer.Screen
-          name="Auto Generate Question Paper"
-          initialParams={params}
-          component={QuestionStackNavigator}
-          options={{
-            drawerIcon: ({ color }) => <Icon name="file-text" size={20} color={color} />,
-          }}
-        />
-        <Drawer.Screen
-          name="Generate Question Paper Manually"
-          component={ManualQuestionScreen}
-          initialParams={params}
-          options={{
-            drawerIcon: ({ color }) => <Icon name="pencil" size={20} color={color} />,
-          }}
-        />
-        <Drawer.Screen
-          name="Change Password "
-          component={ChangePasswordTeacher}
-          initialParams={params}
-          options={{
-            drawerIcon: ({ color }) => <Icon name="lock" size={20} color={color} />,
-          }}
-        />
-        <Drawer.Screen
-          name="Subject Content"
-          component={SubjectStackNavigator}
-          initialParams={params}
-          options={{
-            drawerIcon: ({ color }) => <Icon name="book" size={20} color={color} />,
           }}
         />
       </Drawer.Navigator>

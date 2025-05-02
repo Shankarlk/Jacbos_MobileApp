@@ -21,7 +21,7 @@ const ChapterContentScreen = ({ navigation, route }) => {
 
   const fetchContents = async () => {
     try {
-      const response = await fetch(`http://192.168.109.122:5000/api/TimeTableApi/contenttypelist?Id=${chapterId}`);
+      const response = await fetch(`${BASE_URL}/api/TimeTableApi/contenttypelist?Id=${chapterId}`);
       const data = await response.json();
       setContents(data);
       console.log('type',data);

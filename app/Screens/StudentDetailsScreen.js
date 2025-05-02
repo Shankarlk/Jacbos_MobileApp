@@ -41,22 +41,20 @@ const StudentDetailsScreen = ({ route }) => {
     <ScrollView contentContainerStyle={{ flexGrow: 1, alignItems: 'center', padding: 16, backgroundColor: '#f3f4f6' }}>
     
         {/* Student Details Card */}
-        <View style={{ width: '95%', backgroundColor: 'white', borderRadius: 8, elevation: 4, padding: 10, marginTop: 100 }}>
+        <View style={{ width: '100%',height: '95%', backgroundColor: 'white', borderRadius: 8, elevation: 4, padding: 10, marginTop: 10 }}>
             
-            <Image source={require('../assets/profile.png')} style={{ width: 100, height: 100, alignSelf: 'center', marginBottom: 15 }} />
-    
-            <View style={{ paddingHorizontal: 10 }}>
+            <View style={{ paddingHorizontal: 10,marginTop:"10%"  }}>
                 {[
                     { label: 'Student Name', value: `${student.name} ${student.surname}` },
                     { label: 'Email-ID', value: student.email },
                     { label: 'Phone No', value: student.phone },
-                    { label: 'Standard Name', value: student.standardName },
-                    { label: 'Division', value: student.divisionName },
+                    { label: 'Standard', value: student.standardName },
+                    { label: 'Section', value: student.divisionName },
                     { label: 'Date of Join', value: formatDate(student.doj) }
                 ].map((item, index) => (
                     <View key={index} style={{ flexDirection: 'row', marginBottom: 5, alignItems: 'flex-start' }}>
                         
-                        <Text style={{ fontSize: 16, fontWeight: 'bold', color: 'blue', minWidth: 130,marginBottom:10 }}>
+                        <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#0d6efd', minWidth: 130,marginBottom:10 }}>
                             {item.label} :
                         </Text>
     
@@ -66,12 +64,12 @@ const StudentDetailsScreen = ({ route }) => {
                     </View>
                 ))}
             </View>
-        </View>
-            <View style={{ flexDirection: 'row', marginTop: 20 }}>
-                <TouchableOpacity onPress={() => navigation.goBack()} style={{ padding: 14, backgroundColor: 'black', borderRadius: 8, marginRight: 10, width: 120, alignItems: 'center' }}>
+            <View style={{ flexDirection: 'row', marginTop: "90%" }}>
+                <TouchableOpacity onPress={() => navigation.goBack()} style={{ padding: 14, backgroundColor: 'black', borderRadius: 8, marginLeft: "25%", width: 120, alignItems: 'center' }}>
                     <Text style={{ fontSize: 18, color: 'white', fontWeight: 'bold' }}>Back</Text>
                 </TouchableOpacity>
             </View>
+        </View>
     </ScrollView>
     
     );

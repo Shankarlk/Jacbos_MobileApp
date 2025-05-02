@@ -10,7 +10,7 @@ import {
 import Feather from "react-native-vector-icons/Feather"; // Import Feather icons
 import BASE_URL from "./apiConfig";
 
-export default function ChangePasswordTeacher({ route }) {
+export default function ChangePasswordTeacher({ navigation,route }) {
     const { username } = route.params || { username: "Guest" };
 
     const [oldPassword, setOldPassword] = useState("");
@@ -49,10 +49,20 @@ export default function ChangePasswordTeacher({ route }) {
             // console.log("Response:", data);
 
             if (data.message ==="Saved!") {
-                Alert.alert("Success", "Password changed successfully");
-                setOldPassword("");
-                setNewPassword("");
-                setConfirmPassword("");
+                Alert.alert("Success", "Password changed successfully", [
+                    {
+                        text: "OK",
+                        onPress: () => {
+                            setOldPassword("");
+                            setNewPassword("");
+                            setConfirmPassword("");
+                            navigation.reset({
+                                index: 0,
+                                routes: [{ name: 'Login' }],
+                            });
+                        }
+                    }
+                ]);            
             } else {
                 Alert.alert("Error", data.message || "Incorrect Current Password");
             }

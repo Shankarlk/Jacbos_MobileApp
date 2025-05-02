@@ -96,10 +96,11 @@ function ListOfStudentsScreen ({ route }) {
         }));
     
         try {
-            await axios.post(`${BASE_URL}/api/TimeTableApi/updateattendance`, attendanceData, {
+            const response = await axios.post(`${BASE_URL}/api/TimeTableApi/updateattendance`, attendanceData, {
                 headers: { 'Content-Type': 'application/json' }
             });
             console.log(attendanceData);
+            console.log(response.data); 
             Alert.alert("Success", "Attendance submitted successfully.");
         } catch (error) {
             Alert.alert("Error", "Failed to submit attendance.");
